@@ -14,6 +14,16 @@
 
 ### Event
 
+- transaction generate
+- transaction recv
+- block generate
+- block recv
+
+#### functions
+
+- simulate event
+- event type
+
 ### Random number library
 
 
@@ -21,3 +31,6 @@
 
 - matplotlib / gnuplot
 
+
+
+## Events
