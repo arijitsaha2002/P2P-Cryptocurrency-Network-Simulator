@@ -11,7 +11,7 @@ n = int(input("Number of peers : "))
 while True:
     degree_secuence = np.random.randint(low=MIN_DEGREE, high=MAX_DEGREE + 1, size= n)
     if nx.is_graphical(degree_secuence):
-        Graph = nx.random_degree_sequence_graph(degree_secuence, seed= 44)
+        Graph = nx.random_degree_sequence_graph(degree_secuence)
         if nx.is_connected(Graph):
             break;
 
@@ -19,5 +19,5 @@ edges = Graph.edges()
 
 for e in edges:
     n1, n2 = e
-    print(n1 + 1, n2 + 1)
+    print(n1 , n2)
 
