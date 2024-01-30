@@ -54,10 +54,18 @@ public:
 
         return S;
     }
+
+	/* Pending Implementation */
+	long double get_latency_between_nodes(Node* n1,Node* n2, int size /* in KB */);
+	long double get_next_block_time(Node* n);
 };
 
 extern RandomNumber rng;
 pair<int, int> getSortedPair(int, int);
 int TransactionAmount(uid_t sender);
+
+/* Pending Implementation */
+void add_transaction_to_mempool(Transaction* new_transaction);
+void add_event_to_queue(Event* new_event);
 
 #endif
