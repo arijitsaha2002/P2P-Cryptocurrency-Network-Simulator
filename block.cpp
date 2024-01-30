@@ -1,5 +1,4 @@
 #include "block.h"
-#include "utils.h"
 /*
  * Transaction size
  */
@@ -31,6 +30,10 @@ Transaction::Transaction(int sender) {
 
 	this -> sz = TRANSACTION_SIZE;
 	this -> timestamp = CURRENT_TIME;
+
+	for(int i=0; i<MAX_USERS; i++){
+		this->user_recv_time[i] = -1;
+	}
 }
 
 /*
@@ -64,6 +67,9 @@ Block::Block(int miner, Block* prev) {
 	user_balance[miner] += COINBASE_AMOUNT;
 	for(int i=0;i<MAX_TXN_PER_BLOCK;i++) {
 		transactions[i] = NULL;
+	}
+	for(int i=0; i<MAX_USERS; i++){
+		users_recv_time[i] = -1;
 	}
 }
 
