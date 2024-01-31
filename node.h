@@ -21,5 +21,4 @@ public:
 	Block* get_longest_chain_tail();
 };
 
-
 #endif

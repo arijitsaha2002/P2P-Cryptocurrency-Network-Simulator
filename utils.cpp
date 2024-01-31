@@ -12,3 +12,10 @@ int TransactionAmount(uid_t sender){
 }
 
 RandomNumber rng;
+vector<Node *> LIST_OF_NODES;
+set<Event> LIST_OF_EVENTS;
+
+void add_event_to_queue(Event e) {
+    LIST_OF_NODES.insert(e);
+}
+

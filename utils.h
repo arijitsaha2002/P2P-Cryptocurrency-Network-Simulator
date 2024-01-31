@@ -4,13 +4,15 @@
 #include <random>
 #include <vector>
 #include <set>
+#include <ctime>
+#include <fstream>
 #include <iostream>
 #include <algorithm>
 #include <queue>
 #include <ext/pb_ds/assoc_container.hpp>
 #include <ext/pb_ds/tree_policy.hpp>
 #include <unordered_map>
-
+#include "event.h"
 
 using namespace std;
 
@@ -62,8 +64,14 @@ public:
 };
 
 extern RandomNumber rng;
+extern vector<Node *> LIST_OF_NODES;
+extern set<Event> LIST_OF_EVENTS;
+
+
+
 pair<int, int> getSortedPair(int, int);
 int TransactionAmount(uid_t sender);
+void add_event_to_queue(Event e);
 
 /* Pending Implementation */
 void add_transaction_to_mempool(Transaction* new_transaction);
