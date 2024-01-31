@@ -3,7 +3,8 @@
 #include "events.h"
 
 vector<Node *> LIST_OF_NODES;
-set<Event> LIST_OF_EVENTS;
+set<Event*, EventCMP> LIST_OF_EVENTS;
+long double CURRENT_TIME;
 
 void init(string file_name){
     ifstream input(file_name);
@@ -34,10 +35,12 @@ void init(string file_name){
 
 
 void run_loop(){
+    CURRENT_TIME = 0;
     while(/* condition */) {
         auto * top = LIST_OF_EVENTS.begin();
         top->simulator();
         LIST_OF_EVENTS.erase(top);
+        CURRENT_TIME ++;
     }
 }
 

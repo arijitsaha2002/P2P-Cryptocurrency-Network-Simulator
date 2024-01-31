@@ -1,7 +1,7 @@
 #ifndef BLOCK_H
 
 #include <cstdint>
-#include <utils.h>
+#include "utils.h"
 #define BLOCK_H
 #define MAX_BLOCK_SIZE 1024 // in KB
 #define COINBASE_TRANSACTION_SIZE 1 // in KB
