@@ -19,13 +19,13 @@ class Transaction {
 		int amount; // C coins
 		int tid; // Txn ID
 		Transaction(int sender, int receiver, int amount);
-		static tid_t next_tid;
+		static int next_tid;
 		int sz;
 		long double timestamp;
 	public:
 		Transaction(int sender);
 		Transaction(Node* creator_node);
-		static void reset(){next_tid = 0;}
+		// static void reset(){next_tid = 0;}
 		int get_size(); // in KB
 		int get_sender() {return sender;}
 		int get_receiver() {return receiver;}
@@ -34,6 +34,7 @@ class Transaction {
 		long double *user_recv_time;
 		~Transaction();
 };
+int Transaction::next_tid = 0;
 
 class CoinbaseTransaction : public Transaction {
 	/*
@@ -60,7 +61,6 @@ class Block {
 	public:
 		blk_t prev_blk_id; // For the chain
 		Block* prev_blk;
-		static void reset() {next_blk_id = 0;};
 		Block(int miner, Block* prev);
 		~Block();
 		bool add_transaction(Transaction* txn);
@@ -69,5 +69,5 @@ class Block {
 		long double *users_recv_time;
 		blk_t blk_id;
 };
-
+blk_t Block::next_blk_id = 0;
 #endif
