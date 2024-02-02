@@ -1,6 +1,7 @@
 #ifndef BLOCK_H
 
 #include <cstdint>
+#include <utils.h>
 #define BLOCK_H
 #define MAX_BLOCK_SIZE 1024 // in KB
 #define COINBASE_TRANSACTION_SIZE 1 // in KB
@@ -28,6 +29,7 @@ class Transaction {
 		int get_receiver() {return receiver;}
 		int get_amount() {return amount;}
 		int get_tid() {return tid;}
+		long double user_recv_time[MAX_USERS];
 };
 
 class CoinbaseTransaction : public Transaction {
@@ -54,6 +56,8 @@ class Block {
 		int length_of_chain;
 		int *user_balance;
 		long double timestamp;
+		// add time for the user who created the block when it is accepted to be sent in the blochain
+		long double users_recv_time[MAX_USERS];
 	public:
 		static void reset() {next_blk_id = 0;};
 		Block(int miner, Block* prev);
