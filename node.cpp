@@ -12,6 +12,7 @@ bool Node::add_block_to_tree(Block* blk){
 
 	Block* prev_blk = blk->prev_blk;
 
+	blk->users_recv_time[node_id] = CURRENT_TIME;
 	if(prev_blk->users_recv_time[node_id] == -1){
 		// Parent block not yet recieved
 		if(ukn_blocks.find(prev_blk->blk_id) == ukn_blocks.end()){
@@ -31,7 +32,6 @@ bool Node::add_block_to_tree(Block* blk){
 		// 	longest_chain_tail = blk;
 		// }
 	}else{
-		blk->users_recv_time[node_id] = CURRENT_TIME;
 		add_pending_child_blocks(blk);
 	}
 
