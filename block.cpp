@@ -1,4 +1,5 @@
 #include "block.h"
+extern RandomNumber rng;
 /*
  * Transaction size
  */
@@ -31,9 +32,15 @@ Transaction::Transaction(int sender) {
 	this -> sz = TRANSACTION_SIZE;
 	this -> timestamp = CURRENT_TIME;
 
+	this -> user_recv_time = new long double[MAX_USERS];
+
 	for(int i=0; i<MAX_USERS; i++){
 		this->user_recv_time[i] = -1;
 	}
+}
+
+Transaction::~Transaction() {
+	delete user_recv_time;
 }
 
 /*
@@ -65,9 +72,8 @@ Block::Block(int miner, Block* prev) {
 		user_balance[i] = prev->user_balance[i];
 	}
 	user_balance[miner] += COINBASE_AMOUNT;
-	for(int i=0;i<MAX_TXN_PER_BLOCK;i++) {
-		transactions[i] = NULL;
-	}
+
+	this -> users_recv_time = new long double[MAX_USERS];
 	for(int i=0; i<MAX_USERS; i++){
 		users_recv_time[i] = -1;
 	}
@@ -79,6 +85,7 @@ Block::Block(int miner, Block* prev) {
 Block::~Block() {
 	delete coinbase;
 	delete user_balance;
+	delete users_recv_time;
 }
 
 /*

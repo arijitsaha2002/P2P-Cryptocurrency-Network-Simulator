@@ -2,20 +2,19 @@ CPP := g++
 CPPFLAGS := -Wall -Wextra -g
 
 
+all: block.o utils.o events.o node.o
+
 block.o: utils.h block.h block.cpp Makefile
 	$(CPP) $(CPPFLAGS) -c block.cpp
 
-graph: utils.o graph.o Makefile
-	$(CPP) $(CPPFLAGS) -o graph graph.o utils.o
-
-graph.o: utils.h graph.cpp Makefile
-	$(CPP) $(CPPFLAGS) -c graph.cpp
-
-utils.o: utils.h utils.cpp Makefile
+utils.o: utils.h utils.cpp events.h Makefile
 	$(CPP) $(CPPFLAGS) -c utils.cpp
 
-events.o: events.h block.h utils.h events.cpp Makefile
+events.o: events.h block.h utils.h events.cpp node.h Makefile
 	$(CPP) $(CPPFLAGS) -c events.cpp
 
+node.o: utils.h node.h node.cpp Makefile
+	$(CPP) $(CPPFLAGS) -c node.cpp
+
 clean:
-	rm *.o graph || true
+	rm *.o || true

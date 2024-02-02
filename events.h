@@ -2,6 +2,7 @@
 #define EVENTS_H
 #include "block.h"
 #include "utils.h"
+#include "node.h"
 
 /**
  * @file events.h
@@ -32,6 +33,7 @@ enum event_type
  */
 class Event
 {
+	protected:
 	long double timestamp;
 	event_type type;
 
@@ -43,14 +45,15 @@ class Event
 	 * @param time The time at which the event occurs
 	 * @param type The type of the event
 	 */
-	Event(long double time, int type);
+	Event(long double time, event_type type);
 	bool operator<(const Event& rhs) const;
+	bool operator>(const Event& rhs) const;
 	/**
 	 * @brief Function to simulate the event
 	 *
 	 * Pure virtual function to simulate the event
 	 */
-	virtual void simulate_event() = 0;
+	virtual void simulate_event();
 };
 
 /**
@@ -64,6 +67,7 @@ class GenerateTransaction: public Event
 	void create_events_for_recvrs(Transaction* new_transaction);
 	void create_event_for_next_transaction();
 	public:
+	void simulate_event();
 
 	/**
 	 * @brief Constructor for GenerateTransaction
@@ -86,6 +90,7 @@ class TransactionRecieved: public Event
 	Node* sender_node;
 
 	public:
+	void simulate_event();
 
 	/**
 	 * @brief Constructor for TransactionRecieved
@@ -111,6 +116,7 @@ class GenerateBlock: public Event
 	void create_events_for_recvrs(Block* new_block);
 
 	public:
+	void simulate_event();
 
 	/**
 	 * @brief Constructor for GenerateBlock
@@ -119,7 +125,7 @@ class GenerateBlock: public Event
 	 * @param creator_node The node which creates the block
 	 * @param parent_block The parent block of the block being created
 	 */
-	GenerateBlock(long double time, Node* creator_node, Node* parent_block);
+	GenerateBlock(long double time, Node* creator_node, Block* parent_block);
 };
 
 /**
@@ -127,7 +133,7 @@ class GenerateBlock: public Event
  *
  * @param node The node which creates the block
  */
-void create_event_for_next_block(Node* node);
+void create_event_for_next_block(Node* node,long double time);
 
 /**
  * @class BlockRecieved
@@ -141,6 +147,7 @@ class BlockRecieved: public Event
 	Node* sender_node;
 
 	public:
+	void simulate_event();
 
 	/**
 	 * @brief Constructor for BlockRecieved
