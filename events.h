@@ -1,7 +1,7 @@
 #ifndef EVENTS_H
 #define EVENTS_H
 #include "block.h"
-#include "transaction.h"
+#include "utils.h"
 
 /**
  * @file events.h
