@@ -3,7 +3,7 @@
 #include "events.h"
 
 vector<Node *> LIST_OF_NODES;
-set<Event*, EventCMP> LIST_OF_EVENTS;
+set<Event> LIST_OF_EVENTS;
 long double CURRENT_TIME;
 
 void init(string file_name){
@@ -20,7 +20,7 @@ void init(string file_name){
     
     for(int i = 0; i < numberOfPerrs; i ++){
         LIST_OF_NODES.push_back(new Node(i));
-        LIST_OF_NODES[i]->add_node_to_blockchain(GENESIS_BLOCK);
+        LIST_OF_NODES[i]->add_block_to_tree(GENESIS_BLOCK);
     }
     
     for(int i = 0; i < numberOfEdges; i ++){
@@ -37,7 +37,7 @@ void init(string file_name){
 void run_loop(){
     CURRENT_TIME = 0;
     while(/* condition */) {
-        auto * top = LIST_OF_EVENTS.begin();
+        auto top = LIST_OF_EVENTS.begin();
         top->simulator();
         LIST_OF_EVENTS.erase(top);
         CURRENT_TIME ++;

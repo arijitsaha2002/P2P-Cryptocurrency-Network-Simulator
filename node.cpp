@@ -1,38 +1,89 @@
 #include "node.h"
 extern long double CURRENT_TIME;
 
+// NOT DEFINED
+//-----------------------
+extern long double Z1;
+//-----------------------
+
+
 Node::Node(int node_id){
 	this->node_id = node_id;
+	this->capabilities = 0;
+}
+
+Node::Node(int node_id, int capabilities){
+	this->node_id = node_id;
+	this->capabilities = capabilities;
+
+// using [Z1*h + (1-Z1)*(10*h) = 1] for finding the hashing power
+	if(capabilities & NODE_LOW_CPU){
+		this->hashing_power = 1/(10 - 9*Z1);
+	}
+	else{
+		this->hashing_power = 10/(10- 9*Z1);
+	}
+}
+
+void Node::update_longest_chain_tail(Block* blk){
+	if(this->longest_chain_tail->get_length_of_chain() < blk->get_length_of_chain()){
+		longest_chain_tail = blk;
+	}
+}
+
+void Node::update_longest_chain_tail_recursively(Block* blk){
+	auto itr = ukn_blocks.find(blk->blk_id);
+	if(itr == ukn_blocks.end()){
+		update_longest_chain_tail(blk);
+		return;
+	}
+	for(auto child: itr->second){
+		update_longest_chain_tail_recursively(child);
+	}
 }
 
 bool Node::add_block_to_tree(Block* blk){
-	if(blk -> users_recv_time[node_id] != -1){
+
+	if(blk->users_recv_time[node_id] != -1){
 		return false;
 	}
-
-	Block* prev_blk = blk->prev_blk;
-
 	blk->users_recv_time[node_id] = CURRENT_TIME;
-	if(prev_blk->users_recv_time[node_id] == -1){
-		// Parent block not yet recieved
-		if(ukn_blocks.find(prev_blk->blk_id) == ukn_blocks.end()){
-			ukn_blocks[prev_blk->blk_id] = vector<Block*>({blk});
+
+
+	// HANDLING PARENT
+	//
+		//
+		// if parent already recieved and parent not in ukn_blocks
+	if(blk->prev_blk->users_recv_time[node_id] != -1 && ukn_blocks.find(blk->prev_blk->prev_blk_id) == ukn_blocks.end()){
+
+		// ****just think a little bit about first block(coinbase)****
+			update_longest_chain_tail(blk);
+	}
+	else{
+		//
+		// if parent not present or parent in ukn_blocks then add current to ukn_blocks
+		if(ukn_blocks.find(blk->prev_blk_id) == ukn_blocks.end()){
+			ukn_blocks[blk->prev_blk_id] = vector<Block*>({blk});
 		}
 		else{
-			ukn_blocks[prev_blk->blk_id].push_back(blk);
+			ukn_blocks[blk->prev_blk_id].push_back(blk);
 		}
 
-		// int curr_id = blk->blk_id;
-		// while(ukn_blocks.find(curr_id) != ukn_blocks.end()){
-		// 	Block* blk_child = ukn_blocks.find(curr_id)->second;
-		// 	add_block_to_tree(blk_child);
-		// }
+	}
+
 	
-		// if(blk->get_length_of_chain() > longest_chain_tail->get_length_of_chain()){
-		// 	longest_chain_tail = blk;
-		// }
-	}else{
-		add_pending_child_blocks(blk);
+	// HANDLING CHILDREN
+	//
+	//
+	// if current blk goes into ukn_blocks ==> do nothing
+	//
+		// If current blk didn't in ukn_blocks
+		// if no waiting children ==> already updated the length while handling children
+		//
+			//
+			// if there are waiting children
+	if(ukn_blocks.find(blk->blk_id) != ukn_blocks.end()){
+		update_longest_chain_tail_recursively(blk);
 	}
 
 	return true;

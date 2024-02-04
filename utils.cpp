@@ -2,10 +2,8 @@
 #include "events.h"
 
 RandomNumber rng;
-vector<Node *> LIST_OF_NODES;
-
-
-set<Event> LIST_OF_EVENTS;
+extern vector<Node *> LIST_OF_NODES;
+extern set<Event> LIST_OF_EVENTS;
 
 pair<int, int> getSortedPair(int a, int b) {
     return make_pair(min(a, b), max(a, b));
