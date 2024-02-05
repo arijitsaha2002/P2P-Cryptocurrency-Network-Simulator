@@ -14,9 +14,9 @@ if(len(sys.argv) != 2):
 
 n = int(sys.argv[1])
 while True:
-    degree_secuence = np.random.randint(low=MIN_DEGREE, high=MAX_DEGREE + 1, size= n)
-    if nx.is_graphical(degree_secuence):
-        Graph = nx.random_degree_sequence_graph(degree_secuence)
+    degree_sequence = np.random.randint(low=MIN_DEGREE, high=MAX_DEGREE + 1, size= n)
+    if nx.is_graphical(degree_sequence):
+        Graph = nx.random_degree_sequence_graph(degree_sequence)
         if nx.is_connected(Graph):
             break;
 
