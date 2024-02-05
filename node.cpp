@@ -12,7 +12,7 @@ Node::Node(int node_id){
 	this->capabilities = 0;
 }
 
-Node::Node(int node_id, int capabilities){
+Node::Node(int node_id, int capabilities, Block* genesis_block){
 	this->node_id = node_id;
 	this->capabilities = capabilities;
 
@@ -23,6 +23,7 @@ Node::Node(int node_id, int capabilities){
 	else{
 		this->hashing_power = 10/(10- 9*Z1);
 	}
+	this->longest_chain_tail = genesis_block;
 }
 
 void Node::update_longest_chain_tail(Block* blk){
@@ -120,3 +121,7 @@ void Node::add_node(Node* neighbour){
 // bool Block::populate_block(Block* blk){
 // 	// pending implmentation
 // }
+
+int Node::get_capability(){
+	return this->capabilities;
+}

@@ -61,6 +61,7 @@ class Block {
 	public:
 		blk_t prev_blk_id; // For the chain
 		Block* prev_blk;
+		Block();
 		Block(int miner, Block* prev);
 		~Block();
 		bool add_transaction(Transaction* txn);

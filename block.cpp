@@ -1,4 +1,7 @@
 #include "block.h"
+#include "utils.h"
+
+extern int INITIAL_AMOUNT;
 extern RandomNumber rng;
 /*
  * Transaction size
@@ -79,6 +82,27 @@ Block::Block(int miner, Block* prev) {
 	}
 }
 
+Block::Block(){
+	this->miner = -1;
+	this->prev_blk = nullptr;
+	this->prev_blk_id = -1;
+	this->blk_id = next_blk_id++;
+	this->sz = COINBASE_TRANSACTION_SIZE;
+	this->coinbase = nullptr;
+	this->user_balance = new int[MAX_USERS];
+	this->length_of_chain = 1;
+	this->timestamp = CURRENT_TIME;
+	for(int i=0; i<MAX_USERS; i++){
+		user_balance[i] = INITIAL_AMOUNT;
+	}
+
+	this->users_recv_time = new long double[MAX_USERS];
+	
+	for(int i=0; i<MAX_USERS; i++){
+		users_recv_time[i] = CURRENT_TIME;
+	}
+
+}
 /*
  * Destructor
  */

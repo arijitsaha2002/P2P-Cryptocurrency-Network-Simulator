@@ -34,7 +34,6 @@ enum event_type
 class Event
 {
 	protected:
-	long double timestamp;
 	event_type type;
 
 	public:
@@ -45,6 +44,7 @@ class Event
 	 * @param time The time at which the event occurs
 	 * @param type The type of the event
 	 */
+	long double timestamp;
 	Event(long double time, event_type type);
 	bool operator<(const Event& rhs) const;
 	bool operator>(const Event& rhs) const;

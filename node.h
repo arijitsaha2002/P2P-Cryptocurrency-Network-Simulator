@@ -6,8 +6,8 @@
 
 #define NODE_FAST	0x1
 #define NODE_SLOW	0x2
-#define NODE_LOW_CPU	0x3
-#define NODE_FAST_CPU	0x4
+#define NODE_LOW_CPU	0x4
+#define NODE_FAST_CPU	0x8
 
 using namespace std;
 
@@ -24,7 +24,7 @@ class Node {
 	
 public:
     Node(int node_id);
-	Node(int node_id, int capabilities);
+	Node(int node_id, int capabilities, Block* genesis_block);
     bool add_transaction(Transaction* txn); //
     bool add_block_to_tree(Block* blk);
 	vector<Node*> get_neighbours();
@@ -32,6 +32,7 @@ public:
 	bool populate_block(Block* blk); //
 	Block* get_longest_chain_tail();
 	int get_id();
+	int get_capability();
 };
 
 #endif
