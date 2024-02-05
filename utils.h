@@ -12,13 +12,14 @@
 #include <ext/pb_ds/assoc_container.hpp>
 #include <ext/pb_ds/tree_policy.hpp>
 #include <unordered_map>
-
+#include "events.h"
 #include <map>
 using namespace std;
 
 #define MIN_DEGREE 3
 #define MAX_DEGREE 6
 #define newline '\n'
+#define EPSILON 0.01
 
 class RandomNumber;
 class Event;
@@ -27,15 +28,16 @@ class Transaction;
 class TransactionRecieved;
 
 
-// struct EventCMP {
-//     bool operator()(Event * event1, Event * event2) const {
-//         return (*event1) < (*event2);
-//     }
-// };
+ struct EventCMP {
+	 bool operator()(Event * event1, Event * event2) const {
+		 return (*event1) < (*event2);
+	 }
+ };
 
+#define EVENT_SET set<Event *, EventCMP>
 extern int MAX_USERS;
 extern vector<Node *> LIST_OF_NODES;
-// extern set<Event *, EventCMP> LIST_OF_EVENTS;
+extern EVENT_SET LIST_OF_EVENTS;
 extern long double CURRENT_TIME;
 
 pair<int, int> getSortedPair(int, int);
