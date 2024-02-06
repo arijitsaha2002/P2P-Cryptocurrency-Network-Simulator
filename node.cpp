@@ -41,6 +41,8 @@ void Node::update_longest_chain_tail_recursively(Block* blk){
 	for(auto child: itr->second){
 		update_longest_chain_tail_recursively(child);
 	}
+	// erase updated blocks from ukn_blocks
+	ukn_blocks.erase(ukn_blocks.find(blk->blk_id));
 }
 
 bool Node::add_block_to_tree(Block* blk){
@@ -90,16 +92,16 @@ bool Node::add_block_to_tree(Block* blk){
 	return true;
 }
 
-void Node::add_pending_child_blocks(Block* blk){
-	int blk_id = blk->blk_id;
-	if(ukn_blocks.find(blk_id) != ukn_blocks.end()){
-		vector<Block*> child_blks = ukn_blocks[blk_id];
-		for(unsigned int i=0; i<child_blks.size(); i++){
-			add_pending_child_blocks(child_blks[i]);
-		}
-		ukn_blocks.erase(blk_id);
-	}
-}
+//void Node::add_pending_child_blocks(Block* blk){
+//	int blk_id = blk->blk_id;
+//	if(ukn_blocks.find(blk_id) != ukn_blocks.end()){
+//		vector<Block*> child_blks = ukn_blocks[blk_id];
+//		for(unsigned int i=0; i<child_blks.size(); i++){
+//			add_pending_child_blocks(child_blks[i]);
+//		}
+//		ukn_blocks.erase(blk_id);
+//	}
+//}
 
 // bool Node::add_transaction(Transaction* txn){
 // 	// pending
