@@ -11,13 +11,13 @@ int Transaction::get_size() {
 
 int Transaction::next_tid = 0;
 blk_t Block::next_blk_id = 0;
-// Transaction::Transaction(int sender, int receiver, int amount) {
-// 	this->sender = sender;
-// 	this->receiver = receiver;
-// 	this->amount = amount;
-// 	this->tid = next_tid++;
-// 	this -> sz = TRANSACTION_SIZE;
-// }
+Transaction::Transaction(int sender, int receiver, int amount) {
+ 	this->sender = sender;
+ 	this->receiver = receiver;
+ 	this->amount = amount;
+ 	this->tid = next_tid++;
+ 	this -> sz = TRANSACTION_SIZE;
+}
  
 /*
  * Uniformly randomly generates a reciever
@@ -41,10 +41,6 @@ Transaction::Transaction(int sender) {
 	for(int i=0; i<MAX_USERS; i++){
 		this->user_recv_time[i] = -1;
 	}
-}
-
-Transaction::Transaction(int sender, int receiver, int amount){
-	
 }
 
 Transaction::~Transaction() {

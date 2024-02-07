@@ -17,6 +17,7 @@ long double CURRENT_TIME, MEAN_TRANSACTION_INTER_ARRIVAL_TIME;
 int MAX_USERS;
 int Z0, Z1, MAX_BLOCKS, END_TIME, MAX_TRANSACTIONS;
 int INITIAL_AMOUNT = 50;
+int AVG_INTERARRIVAL_BLOCK_TIME = 600;
 
 pair<int, int> getSortedPair(int a, int b) {
     return make_pair(min(a, b), max(a, b));
@@ -32,6 +33,9 @@ int TransactionAmount(uid_t sender){
     return rng.uniformNumber(low, high);
 }
 
+unordered_map<int, Transaction*> get_mem_pool(){
+	return mempool;
+}
 
 long double RandomNumber::get_latency_between_nodes(Node* n1,Node* n2, int size /* in KB */){
 	long double pij, cij, dij;
@@ -45,7 +49,8 @@ long double RandomNumber::get_latency_between_nodes(Node* n1,Node* n2, int size 
 }
 
 long double RandomNumber::get_next_block_time(Node *n){
-	return 0;
+	long double T_k = rng.expDistributionNumber(n->get_hashing_power()/AVG_INTERARRIVAL_BLOCK_TIME);
+	return T_k;
 }
 
 void add_event_to_queue(Event * e) {

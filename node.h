@@ -30,10 +30,11 @@ public:
     bool add_block_to_tree(Block* blk);
 	vector<Node*> get_neighbours();
 	void add_node(Node* neighbour);
-	bool populate_block(Block* blk); //
+	void populate_block(Block* blk); //
 	Block* get_longest_chain_tail();
 	int get_id();
 	int get_capability();
+	long double get_hashing_power();
 	void add_pending_child_blocks(Block* blk);
 };
 

@@ -95,20 +95,12 @@ bool Node::add_block_to_tree(Block* blk){
 	return true;
 }
 
-//void Node::add_pending_child_blocks(Block* blk){
-//	int blk_id = blk->blk_id;
-//	if(ukn_blocks.find(blk_id) != ukn_blocks.end()){
-//		vector<Block*> child_blks = ukn_blocks[blk_id];
-//		for(unsigned int i=0; i<child_blks.size(); i++){
-//			add_pending_child_blocks(child_blks[i]);
-//		}
-//		ukn_blocks.erase(blk_id);
-//	}
-//}
-
  bool Node::add_transaction(Transaction* txn){
-	 // pending
-	 return false;
+	 if(txn->user_recv_time[node_id] != -1){
+		return false;
+	 }
+	 txn->user_recv_time[node_id] = CURRENT_TIME;
+	 return true;
  }
 
 vector<Node*> Node::get_neighbours(){
@@ -119,14 +111,36 @@ Block* Node::get_longest_chain_tail(){
 	return this->longest_chain_tail;
 }
 
+long double Node::get_hashing_power(){
+	return this->hashing_power;
+}
+
 void Node::add_node(Node* neighbour){
 	connected_peers.push_back(neighbour);
 }
 
- bool Node::populate_block(Block* blk){
-// 	// pending implmentation
-	return false;
- }
+void Node::populate_block(Block* blk){
+	unordered_map<int, Transaction*> mem_pool_copy = get_mem_pool();
+	Block* end_blk = get_longest_chain_tail();
+	while(end_blk->blk_id != 0){
+		for(auto txn: end_blk->transactions){
+			if(mem_pool_copy.find(txn->get_tid()) != mem_pool_copy.end()){
+				mem_pool_copy.erase(txn->get_tid());
+			}
+
+		}
+
+		end_blk = end_blk->prev_blk;
+	}
+
+	for(auto txn : mem_pool_copy){
+		blk->add_transaction(txn.second);
+		if(blk->transactions.size() > 1022){
+			break;
+		}
+	}
+
+}
 
 int Node::get_capability(){
 	return this->capabilities;

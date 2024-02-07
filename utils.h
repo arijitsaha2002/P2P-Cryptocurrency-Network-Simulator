@@ -36,7 +36,7 @@ int TransactionAmount(uid_t sender);
 void add_event_to_queue(Event *e);
 void add_transaction_to_mempool(Transaction* new_transaction);
 void add_event_to_queue(Event* new_event);
-
+unordered_map<int, Transaction*> get_mem_pool();
 class RandomNumber{
     random_device rd;
 public:
