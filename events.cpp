@@ -13,7 +13,7 @@ Event::Event(long double time, event_type type)
 
 bool Event::operator<(const Event& rhs) const
 {
-	return this->timestamp < rhs.timestamp;
+	return this->timestamp <= rhs.timestamp;
 }
 
 bool Event::operator>(const Event& rhs) const

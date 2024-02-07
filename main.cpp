@@ -13,12 +13,12 @@ vector<Node *> LIST_OF_NODES;
 unordered_map<int, Transaction *> mempool;
 map<pair<int, int>, double> rho;
 EVENT_SET LIST_OF_EVENTS;
-long double CURRENT_TIME, MEAN_TRANSACTION_INTER_ARRIVAL_TIME;
+long double CURRENT_TIME = 0, MEAN_TRANSACTION_INTER_ARRIVAL_TIME = 7.5;
 int MAX_USERS;
 float Z0 = 0.4, Z1 = 0.3;
-int MAX_BLOCKS = 500;
+int MAX_BLOCKS = 300;
 int INITIAL_AMOUNT = 50;
-int AVG_INTERARRIVAL_BLOCK_TIME = 600;
+int AVG_INTERARRIVAL_BLOCK_TIME = 60;
 
 pair<int, int> getSortedPair(int a, int b) {
     return make_pair(min(a, b), max(a, b));
@@ -43,9 +43,9 @@ long double RandomNumber::get_latency_between_nodes(Node* n1,Node* n2, int size 
 	auto p = getSortedPair(n1->get_id(), n2->get_id());
 	if(rho.find(p) == rho.end()) rho[p] = uniformNumber(10,500);
 	size = size * 8;
-	pij = rho[p];
-	cij = (n1->get_capability() & n2->get_capability() & NODE_FAST) ?1000000*100 : 1000000*5;
-	dij = expDistributionNumber(cij/ 96) * 0.001;
+	pij = rho[p] * 1e-3;
+	cij = (n1->get_capability() & n2->get_capability() & NODE_FAST) ?1000*100 : 1000*5;
+	dij = expDistributionNumber(cij/ 96);
 	return pij + size / cij + dij;
 }
 
@@ -78,7 +78,7 @@ void init(string file_name){
 
 	while((int) Z0_distribution.size() != numberOfPeers) Z0_distribution.push_back(NODE_FAST);
 	while((int) Z1_distribution.size() != numberOfPeers) Z1_distribution.push_back(NODE_FAST_CPU);
-
+ 
 	shuffle(Z0_distribution.begin(), Z0_distribution.end(), rng.gen);
 	shuffle(Z1_distribution.begin(), Z1_distribution.end(), rng.gen);
 
@@ -96,18 +96,14 @@ void init(string file_name){
     input.close();
 }
 
-/***************CORRECT THIS*******************/
-/***************CORRECT THIS*******************/
-/***************CORRECT THIS*******************/
 void create_initial_events(){
 
-	// std::pair<Event:iterator, bool> ret;
 	for(int i=0; i<MAX_USERS; i++){
-		auto ret = LIST_OF_EVENTS.insert(new GenerateTransaction(0, LIST_OF_NODES[i]));
-		asm("int3");
+		Event* to_add = new GenerateTransaction(rng.expDistributionNumber(1.0/MEAN_TRANSACTION_INTER_ARRIVAL_TIME), LIST_OF_NODES[i]);
+		LIST_OF_EVENTS.insert(to_add);
 	}
 	for(int i = 0; i<MAX_USERS; i++){
-		auto ret = LIST_OF_EVENTS.insert(new GenerateBlock(0, LIST_OF_NODES[i], LIST_OF_NODES[i]->get_longest_chain_tail()));
+		LIST_OF_EVENTS.insert(new GenerateBlock(rng.get_next_block_time(LIST_OF_NODES[i]), LIST_OF_NODES[i], LIST_OF_NODES[i]->get_longest_chain_tail()));
 	}
 
 }
@@ -118,8 +114,9 @@ void run_loop(){
 		int x = Block::get_number_of_blocks();
 		if(x > MAX_BLOCKS) break;
         auto top = LIST_OF_EVENTS.begin();
-        (*top)->simulate_event();
+		assert(CURRENT_TIME <= (*top)->timestamp);
         CURRENT_TIME = (*top)->timestamp;
+        (*top)->simulate_event();
         LIST_OF_EVENTS.erase(top);
     }
 }

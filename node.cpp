@@ -20,11 +20,15 @@ Node::Node(int node_id, int capabilities, Block* genesis_block){
 	this->capabilities = capabilities;
 
 // using [Z1*h + (1-Z1)*(10*h) = 1] for finding the hashing power
+	unsigned int low_cpu_node_cnt = Z1*MAX_USERS;
+	unsigned int high_cpu_node_cnt = MAX_USERS - low_cpu_node_cnt;
+	long double low_cpu_hash_power = 1.0 / (10*high_cpu_node_cnt + 1*low_cpu_node_cnt);
+
 	if(capabilities & NODE_LOW_CPU){
-		this->hashing_power = 1/(10 - 9*Z1);
+		this->hashing_power = low_cpu_hash_power;
 	}
 	else{
-		this->hashing_power = 10/(10- 9*Z1);
+		this->hashing_power = 10 * low_cpu_hash_power;
 	}
 	this->longest_chain_tail = genesis_block;
 }

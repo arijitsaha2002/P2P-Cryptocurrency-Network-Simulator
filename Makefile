@@ -21,4 +21,4 @@ node.o: utils.h node.h node.cpp Makefile
 	$(CPP) $(CPPFLAGS) -c node.cpp
 
 clean:
-	rm *.o || true
+	rm *.o blockSim 2>/dev/null || true

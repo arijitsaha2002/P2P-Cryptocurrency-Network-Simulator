@@ -58,14 +58,15 @@ public:
         return vector<int>(S.begin(), S.end());
     }
 
-    double expDistributionNumber(double lambda){
-        std::exponential_distribution<double> expDist(lambda);
-        return expDist(gen);
+    long double expDistributionNumber(long double lambda){
+        std::exponential_distribution<long double> expDist(lambda);
+		long double ret = expDist(gen);
+        return ret;
     }
 
-    vector<double> expDistributionArray(double lambda, unsigned int size){
+    vector<double> expDistributionArray(long double lambda, unsigned int size){
         vector<double> S;
-        std::exponential_distribution<double> expDist(lambda);
+        std::exponential_distribution<long double> expDist(lambda);
         for(uint i = 0; i<size; i++){
             S.push_back(expDist(gen));
         }
