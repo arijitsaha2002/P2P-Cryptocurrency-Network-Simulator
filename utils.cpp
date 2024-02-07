@@ -1,11 +1,9 @@
 #include "utils.h"
-#include "events.h"
 #include "node.h"
 
 extern RandomNumber rng;
 extern vector<Node *> LIST_OF_NODES;
-extern EVENT_SET LIST_OF_EVENTS;
-unordered_map<pair<int, int>, double> rho;
+map<pair<int, int>, double> rho;
 unordered_map<int, Transaction *> mempool;
 
 pair<int, int> getSortedPair(int a, int b) {
@@ -17,10 +15,6 @@ int TransactionAmount(uid_t sender){
     int low = 0;
     int high = 50;
     return rng.uniformNumber(low, high);
-}
-
-void add_event_to_queue(Event * e) {
-    LIST_OF_EVENTS.insert(e);
 }
 
 long double RandomNumber::get_latency_between_nodes(Node* n1,Node* n2, int size /* in KB */){

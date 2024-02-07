@@ -3,12 +3,24 @@
 #include "events.h"
 #include <algorithm>
 
+struct EventCMP {
+	 bool operator()(Event * event1, Event * event2) const {
+		 return (*event1) < (*event2);
+	 }
+ };
+
+#define EVENT_SET set<Event *, EventCMP>
+
 vector<Node *> LIST_OF_NODES;
 EVENT_SET LIST_OF_EVENTS;
 long double CURRENT_TIME, MEAN_TRANSACTION_INTER_ARRIVAL_TIME;
 int MAX_USERS;
 int Z0, Z1, MAX_BLOCKS, END_TIME, MAX_TRANSACTIONS;
 RandomNumber rng;
+
+void add_event_to_queue(Event * e) {
+    LIST_OF_EVENTS.insert(e);
+}
 
 
 void init(string file_name){

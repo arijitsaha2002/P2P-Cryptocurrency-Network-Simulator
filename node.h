@@ -33,6 +33,7 @@ public:
 	Block* get_longest_chain_tail();
 	int get_id();
 	int get_capability();
+	void add_pending_child_blocks(Block* blk);
 };
 
 #endif
