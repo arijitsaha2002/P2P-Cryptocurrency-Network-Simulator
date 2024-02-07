@@ -1,3 +1,4 @@
+#pragma once
 #ifndef BLOCK_H
 #define BLOCK_H
 
@@ -34,7 +35,6 @@ class Transaction {
 		long double *user_recv_time;
 		~Transaction();
 };
-int Transaction::next_tid = 0;
 
 class CoinbaseTransaction : public Transaction {
 	/*
@@ -70,5 +70,4 @@ class Block {
 		long double *users_recv_time;
 		blk_t blk_id;
 };
-blk_t Block::next_blk_id = 0;
 #endif

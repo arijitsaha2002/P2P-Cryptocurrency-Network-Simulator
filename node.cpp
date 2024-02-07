@@ -6,6 +6,9 @@ extern long double CURRENT_TIME;
 extern long double Z1;
 //-----------------------
 
+int Node::get_id(){
+	return this->node_id;
+}
 
 Node::Node(int node_id){
 	this->node_id = node_id;
@@ -103,10 +106,10 @@ bool Node::add_block_to_tree(Block* blk){
 //	}
 //}
 
-// bool Node::add_transaction(Transaction* txn){
-// 	// pending
-// 	return false;
-// }
+ bool Node::add_transaction(Transaction* txn){
+	 // pending
+	 return false;
+ }
 
 vector<Node*> Node::get_neighbours(){
 	return connected_peers;
@@ -120,9 +123,10 @@ void Node::add_node(Node* neighbour){
 	connected_peers.push_back(neighbour);
 }
 
-// bool Block::populate_block(Block* blk){
+ bool Node::populate_block(Block* blk){
 // 	// pending implmentation
-// }
+	return false;
+ }
 
 int Node::get_capability(){
 	return this->capabilities;

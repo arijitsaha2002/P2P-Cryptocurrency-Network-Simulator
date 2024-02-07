@@ -1,7 +1,6 @@
+#pragma once
 #ifndef EVENTS_H
 #define EVENTS_H
-#include "block.h"
-#include "utils.h"
 #include "node.h"
 
 /**
@@ -53,7 +52,7 @@ class Event
 	 *
 	 * Pure virtual function to simulate the event
 	 */
-	virtual void simulate_event();
+	virtual void simulate_event() = 0;
 };
 
 /**

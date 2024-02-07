@@ -1,5 +1,3 @@
-#include "utils.h"
-#include "node.h"
 #include "events.h"
 #include <algorithm>
 
@@ -10,13 +8,45 @@ struct EventCMP {
  };
 
 #define EVENT_SET set<Event *, EventCMP>
-
+RandomNumber rng;
 vector<Node *> LIST_OF_NODES;
+unordered_map<int, Transaction *> mempool;
+map<pair<int, int>, double> rho;
 EVENT_SET LIST_OF_EVENTS;
 long double CURRENT_TIME, MEAN_TRANSACTION_INTER_ARRIVAL_TIME;
 int MAX_USERS;
 int Z0, Z1, MAX_BLOCKS, END_TIME, MAX_TRANSACTIONS;
-RandomNumber rng;
+int INITIAL_AMOUNT = 50;
+
+pair<int, int> getSortedPair(int a, int b) {
+    return make_pair(min(a, b), max(a, b));
+}
+
+void add_transaction_to_mempool(Transaction* new_transaction){
+	mempool[new_transaction->get_tid()] = new_transaction;
+}
+
+int TransactionAmount(uid_t sender){
+    int low = 0;
+    int high = 50;
+    return rng.uniformNumber(low, high);
+}
+
+
+long double RandomNumber::get_latency_between_nodes(Node* n1,Node* n2, int size /* in KB */){
+	long double pij, cij, dij;
+	auto p = getSortedPair(n1->get_id(), n2->get_id());
+	if(rho.find(p) == rho.end()) rho[p] = uniformNumber(10,500);
+	size = size * 8;
+	pij = rho[p];
+	cij = (n1->get_capability() & n2->get_capability() & NODE_FAST) ?1000000*100 : 1000000*5;
+	dij = expDistributionNumber(cij/ 96) * 0.001;
+	return pij + size / cij + dij;
+}
+
+long double RandomNumber::get_next_block_time(Node *n){
+	return 0;
+}
 
 void add_event_to_queue(Event * e) {
     LIST_OF_EVENTS.insert(e);
@@ -40,8 +70,8 @@ void init(string file_name){
 	vector<int> Z0_distribution(Z0*numberOfPeers, NODE_SLOW);
 	vector<int> Z1_distribution(Z1*numberOfPeers, NODE_LOW_CPU);
 
-	while(Z0_distribution.size() != numberOfPeers) Z0_distribution.push_back(NODE_FAST);
-	while(Z1_distribution.size() != numberOfPeers) Z1_distribution.push_back(NODE_FAST_CPU);
+	while((int) Z0_distribution.size() != numberOfPeers) Z0_distribution.push_back(NODE_FAST);
+	while((int) Z1_distribution.size() != numberOfPeers) Z1_distribution.push_back(NODE_FAST_CPU);
 
 	shuffle(Z0_distribution.begin(), Z0_distribution.end(), rng.gen);
 	shuffle(Z1_distribution.begin(), Z1_distribution.end(), rng.gen);
