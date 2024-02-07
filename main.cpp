@@ -15,7 +15,8 @@ map<pair<int, int>, double> rho;
 EVENT_SET LIST_OF_EVENTS;
 long double CURRENT_TIME, MEAN_TRANSACTION_INTER_ARRIVAL_TIME;
 int MAX_USERS;
-int Z0, Z1, MAX_BLOCKS, END_TIME, MAX_TRANSACTIONS;
+float Z0 = 0.4, Z1 = 0.3;
+int MAX_BLOCKS = 500;
 int INITIAL_AMOUNT = 50;
 int AVG_INTERARRIVAL_BLOCK_TIME = 600;
 
@@ -100,11 +101,13 @@ void init(string file_name){
 /***************CORRECT THIS*******************/
 void create_initial_events(){
 
+	// std::pair<Event:iterator, bool> ret;
 	for(int i=0; i<MAX_USERS; i++){
-		LIST_OF_EVENTS.insert(new GenerateTransaction(0, LIST_OF_NODES[i]));
+		auto ret = LIST_OF_EVENTS.insert(new GenerateTransaction(0, LIST_OF_NODES[i]));
+		asm("int3");
 	}
 	for(int i = 0; i<MAX_USERS; i++){
-		LIST_OF_EVENTS.insert(new GenerateBlock(0, LIST_OF_NODES[i], LIST_OF_NODES[i]->get_longest_chain_tail()));
+		auto ret = LIST_OF_EVENTS.insert(new GenerateBlock(0, LIST_OF_NODES[i], LIST_OF_NODES[i]->get_longest_chain_tail()));
 	}
 
 }
@@ -112,7 +115,8 @@ void create_initial_events(){
 void run_loop(){
     CURRENT_TIME = 0;
     while(!LIST_OF_EVENTS.empty()) {
-		if(CURRENT_TIME > END_TIME) break; 
+		int x = Block::get_number_of_blocks();
+		if(x > MAX_BLOCKS) break;
         auto top = LIST_OF_EVENTS.begin();
         (*top)->simulate_event();
         CURRENT_TIME = (*top)->timestamp;
@@ -129,6 +133,7 @@ int main(int argc, char * argv[]){
     init(file_name);
 	create_initial_events();
     run_loop();
+	cout<< Block::get_number_of_blocks()<<endl;
     return 0;
 }
 

@@ -18,6 +18,16 @@ Transaction::Transaction(int sender, int receiver, int amount) {
  	this->tid = next_tid++;
  	this -> sz = TRANSACTION_SIZE;
 }
+
+int Transaction::get_number_of_transactions()
+{
+	return next_tid;
+}
+
+int Block::get_number_of_blocks()
+{
+	return next_blk_id;
+}
  
 /*
  * Uniformly randomly generates a reciever

@@ -34,6 +34,7 @@ class Transaction {
 		int get_tid() {return tid;}
 		long double *user_recv_time;
 		~Transaction();
+		static int get_number_of_transactions();
 };
 
 class CoinbaseTransaction : public Transaction {
@@ -52,8 +53,8 @@ class Block {
 		CoinbaseTransaction* coinbase;
 		int miner;
 		int sz; // Size in KB
-		static blk_t next_blk_id;
 		int length_of_chain;
+		static blk_t next_blk_id;
 		int *user_balance;
 		long double timestamp;
 		// add time for the user who created the block when it is accepted to be sent in the blochain
@@ -69,5 +70,6 @@ class Block {
 		int get_length_of_chain();
 		long double *users_recv_time;
 		blk_t blk_id;
+		static int get_number_of_blocks();
 };
 #endif
