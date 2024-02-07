@@ -51,7 +51,6 @@ class CoinbaseTransaction : public Transaction {
 class Block {
 	private:
 		CoinbaseTransaction* coinbase;
-		int miner;
 		int sz; // Size in KB
 		int length_of_chain;
 		static blk_t next_blk_id;
@@ -59,6 +58,7 @@ class Block {
 		long double timestamp;
 		// add time for the user who created the block when it is accepted to be sent in the blochain
 	public:
+		int miner;
 		blk_t prev_blk_id; // For the chain
 		std::vector<Transaction*> transactions;
 		Block* prev_blk;

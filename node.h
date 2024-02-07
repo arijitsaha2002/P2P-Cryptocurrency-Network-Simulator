@@ -30,7 +30,7 @@ public:
     bool add_block_to_tree(Block* blk);
 	vector<Node*> get_neighbours();
 	void add_node(Node* neighbour);
-	void populate_block(Block* blk); //
+	void populate_block(Block* blk, long double start_time); //
 	Block* get_longest_chain_tail();
 	int get_id();
 	int get_capability();

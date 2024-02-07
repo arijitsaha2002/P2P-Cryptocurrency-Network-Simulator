@@ -123,7 +123,7 @@ void Node::add_node(Node* neighbour){
 	connected_peers.push_back(neighbour);
 }
 
-void Node::populate_block(Block* blk){
+void Node::populate_block(Block* blk, long double start_time){
 	unordered_map<int, Transaction*> mem_pool_copy = get_mem_pool();
 	Block* end_blk = get_longest_chain_tail();
 	while(end_blk->blk_id != 0){
@@ -138,10 +138,10 @@ void Node::populate_block(Block* blk){
 	}
 
 	for(auto txn : mem_pool_copy){
-		blk->add_transaction(txn.second);
-		if(blk->transactions.size() > 1022){
+		if(txn.second->user_recv_time[node_id] == -1 || start_time < txn.second->user_recv_time[node_id]) 
+			continue;
+		if(!blk->add_transaction(txn.second))
 			break;
-		}
 	}
 
 }

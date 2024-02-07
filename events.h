@@ -111,6 +111,7 @@ class GenerateBlock: public Event
 {
 	Node* creator_node;
 	Block* parent_block;
+	long double start_time;
 
 	void create_events_for_recvrs(Block* new_block);
 

@@ -88,6 +88,7 @@ GenerateBlock::GenerateBlock(long double time, Node* creator_node,Block* parent_
 {
 	this->creator_node = creator_node;
 	this->parent_block = parent_block;
+	this->start_time = CURRENT_TIME;
 }
 
 void GenerateBlock::create_events_for_recvrs(Block* new_block)
@@ -114,7 +115,8 @@ void GenerateBlock::simulate_event()
 		return;
 	}
 	Block* new_block = new Block(creator_node->get_id(), parent_block);
-	creator_node -> populate_block(new_block);
+	creator_node -> populate_block(new_block, this->start_time);
+	assert(this->start_time < CURRENT_TIME);
 
 	create_events_for_recvrs(new_block);
 	create_event_for_next_block(creator_node, this->timestamp);

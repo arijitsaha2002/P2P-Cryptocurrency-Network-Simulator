@@ -1,6 +1,7 @@
 #include "block.h"
 
 extern int INITIAL_AMOUNT;
+extern vector<Block*> LIST_OF_BLOCKS;
 extern RandomNumber rng;
 /*
  * Transaction size
@@ -91,6 +92,8 @@ Block::Block(int miner, Block* prev) {
 	for(int i=0; i<MAX_USERS; i++){
 		users_recv_time[i] = -1;
 	}
+
+	LIST_OF_BLOCKS.push_back(this);
 }
 
 Block::Block(){
@@ -112,6 +115,8 @@ Block::Block(){
 	for(int i=0; i<MAX_USERS; i++){
 		users_recv_time[i] = CURRENT_TIME;
 	}
+
+	LIST_OF_BLOCKS.push_back(this);
 
 }
 /*
