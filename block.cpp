@@ -1,4 +1,5 @@
 #include "block.h"
+#include "utils.h"
 
 extern int INITIAL_AMOUNT;
 extern vector<Block*> LIST_OF_BLOCKS;
@@ -92,6 +93,7 @@ Block::Block(int miner, Block* prev) {
 	for(int i=0; i<MAX_USERS; i++){
 		users_recv_time[i] = -1;
 	}
+	users_recv_time[miner] = CURRENT_TIME;
 
 	LIST_OF_BLOCKS.push_back(this);
 }
