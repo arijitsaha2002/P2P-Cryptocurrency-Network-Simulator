@@ -44,6 +44,10 @@ public:
     RandomNumber() {
         gen = mt19937(rd());
     }
+	
+	void set_seed(int seed){
+		gen = mt19937(seed);
+	}
 
     int uniformNumber(int low, int high) {
         uniform_int_distribution<int> dist(low, high);
