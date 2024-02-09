@@ -133,18 +133,18 @@ Block::~Block() {
 /*
  * Adds a transaction to the block
  */
-bool Block::add_transaction(Transaction* txn) {
+int Block::add_transaction(Transaction* txn) {
 	if(txn->get_amount() > user_balance[txn->get_sender()]) {
-		return false;
+		return 1;
 	}
 	if ( sz + txn->get_size() > MAX_BLOCK_SIZE ) {
-		return false;
+		return 2;
 	}
 	transactions.push_back(txn);
 	sz += txn->get_size();
 	user_balance[txn->get_sender()] -= txn->get_amount();
 	user_balance[txn->get_receiver()] += txn->get_amount();
-	return true;
+	return 0;
 }
 
 /*

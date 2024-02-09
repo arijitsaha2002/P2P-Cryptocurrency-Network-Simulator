@@ -65,7 +65,7 @@ class Block {
 		Block();
 		Block(int miner, Block* prev);
 		~Block();
-		bool add_transaction(Transaction* txn);
+		int add_transaction(Transaction* txn);
 		int get_size();
 		int get_length_of_chain();
 		long double *users_recv_time;

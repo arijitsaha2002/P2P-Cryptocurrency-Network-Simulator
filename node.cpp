@@ -140,8 +140,9 @@ void Node::populate_block(Block* blk, long double start_time){
 	for(auto txn : mem_pool_copy){
 		if(txn.second->user_recv_time[node_id] == -1 || start_time < txn.second->user_recv_time[node_id]) 
 			continue;
-		if(!blk->add_transaction(txn.second))
+		if(blk->add_transaction(txn.second) == 2){
 			break;
+		}
 	}
 
 }
