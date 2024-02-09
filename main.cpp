@@ -14,12 +14,12 @@ unordered_map<int, Transaction *> mempool;
 map<pair<int, int>, double> rho;
 EVENT_SET LIST_OF_EVENTS;
 vector<Block*> LIST_OF_BLOCKS;
-long double CURRENT_TIME = 0, MEAN_TRANSACTION_INTER_ARRIVAL_TIME = 7.5;
+long double CURRENT_TIME = 0, MEAN_TRANSACTION_INTER_ARRIVAL_TIME = 0.75;
 int MAX_USERS;
 float Z0 = 0.4, Z1 = 0.3;
-int MAX_BLOCKS = 200;
+int MAX_BLOCKS = 250;
 int INITIAL_AMOUNT = 50;
-int AVG_INTERARRIVAL_BLOCK_TIME = 60;
+int AVG_INTERARRIVAL_BLOCK_TIME = 10;
 
 pair<int, int> getSortedPair(int a, int b) {
     return make_pair(min(a, b), max(a, b));
@@ -138,6 +138,17 @@ void log_data(){
 		fprintf(f,"%d,%d,%d\n",curr_node -> get_id(),(bool)(curr_node->get_capability() & NODE_FAST),(bool)(curr_node -> get_capability() & NODE_FAST_CPU));
 	}
 	fclose(f);
+
+	for(int i = 0;i< MAX_USERS;i++)
+	{
+		f = fopen(("block_recieve_node"+to_string(i)+".log.csv").c_str(),"w");
+		fprintf(f,"id,timestamp\n");
+		for(auto curr_blk: LIST_OF_BLOCKS)
+		{
+			if(curr_blk->users_recv_time[i] != -1)
+				fprintf(f,"%d,%Lf\n",curr_blk->blk_id,curr_blk->users_recv_time[i]);
+		}
+	}
 
 }
 
