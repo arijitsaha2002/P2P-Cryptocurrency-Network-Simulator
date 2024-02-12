@@ -156,7 +156,11 @@ void log_data(string suffix){
 }
 
 int main(int argc, char * argv[]){
-    string file_name(argv[3]);
+	if(argc != 10){
+		cerr << "Use blockSimWrapper.py\n";
+		return 1;
+	}
+	string file_name(argv[3]);
 	INITIAL_AMOUNT = atoi(argv[1]);
 	MAX_BLOCKS = atoi(argv[2]);
 	AVG_INTERARRIVAL_BLOCK_TIME = atof(argv[4]);
@@ -166,12 +170,12 @@ int main(int argc, char * argv[]){
 	MAX_TRANSACTIONS = atoi(argv[8]);
 	Z0 = atof(argv[9]);
 	string suffix(argv[10]);
-    init(file_name);
+	init(file_name);
 	CURRENT_TIME = 0;
 	create_initial_events();
-    run_loop();
+	run_loop();
 	log_data(suffix);
-    return 0;
+	return 0;
 }
 
 
