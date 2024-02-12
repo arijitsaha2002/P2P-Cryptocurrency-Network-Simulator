@@ -5,3 +5,4 @@ test.cpp
 .venv/*
 
 data
+sample_logs/*.png
