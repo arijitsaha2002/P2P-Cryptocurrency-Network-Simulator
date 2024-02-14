@@ -156,7 +156,7 @@ void log_data(string suffix){
 }
 
 int main(int argc, char * argv[]){
-	if(argc != 10){
+	if(argc != 11){
 		cerr << "Use blockSimWrapper.py\n";
 		return 1;
 	}
