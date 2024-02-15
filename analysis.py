@@ -17,12 +17,17 @@ def make_blockchain_tree(filename):
             T.add_edge(b, a)
 
     G = T 
+    title = get_title_from_filename(filename)
+    plt.figure(figsize=(30,10))
     pos = graphviz_layout(G, prog='dot', args='-Grankdir="LR"')
     nx.draw_networkx_nodes(G, pos, node_size=300)
     nx.draw_networkx_edges(G, pos, edgelist=G.edges(), arrows=True, arrowstyle="<-")
+    plt.title(f"{title}")
+    plt.savefig(os.path.join(os.path.dirname(filename), f'tree_{os.path.basename(filename)[len("block_info_"):-len(".log.csv")]}.png'))
+    plt.close()
 
 def get_title_from_filename(filename):
-    params = filename[:-len(".log.csv")].split("_")[2:]
+    params = os.path.basename(filename)[:-len(".log.csv")].split("_")[2:]
     return {"num_peers": params[0], "mean_interarrival_block_time": params[1], "frac_low_cpu": params[2], "mean_interarrival_transaction_time": params[3], "frac_slow": params[4] }
     
 
@@ -50,14 +55,9 @@ def full_analysis(dirname):
 
     for r in ret:
         title = get_title_from_filename(r[0])
-        plt.figure(figsize=(30,10))
         make_blockchain_tree(os.path.join(dirname, r[0]))
-        plt.title(f"{title}")
-        plt.savefig(os.path.join(dirname, f'tree_{r[0][len("block_info_"):-len(".log.csv")]}.png'))
-
-         # do_ratio_analysis - return 2 lists
         titles.append(str(title))
-        longest_single_chain, total_single_chain = do_ratio_analysis(r[0], r[1])
+        longest_single_chain, total_single_chain = do_ratio_analysis(os.path.join(dirname,r[0]), os.path.join(dirname,r[1]))
         longest_chain.append(longest_single_chain)
         total_chain.append(total_single_chain)
 
@@ -67,6 +67,7 @@ def full_analysis(dirname):
       
     X_axis = numpy.arange(len(titles)) 
     longest_chain = numpy.array(longest_chain).T
+    plt.figure(figsize=(30,10))
     plt.bar(X_axis - 0.1, longest_chain[3], 0.1, label = 'LOW CPU-SLOW SPEED') 
     plt.bar(X_axis, longest_chain[2], 0.1, label = 'LOW CPU-FAST SPEED') 
     plt.bar(X_axis + 0.1, longest_chain[1], 0.1, label = 'HIGH CPU-SLOW SPEED') 
@@ -77,9 +78,11 @@ def full_analysis(dirname):
     plt.title("Longest chain in blockchain") 
     plt.legend() 
     plt.savefig("longest_chain_contrib_comp.png") 
-            
+    plt.close()
+
     X_axis = numpy.arange(len(titles)) 
     total_chain = numpy.array(total_chain).T
+    plt.figure(figsize=(30,10))
     plt.bar(X_axis - 0.1, total_chain[3], 0.1, label = 'LOW CPU-SLOW SPEED') 
     plt.bar(X_axis, total_chain[2], 0.1, label = 'LOW CPU-FAST SPEED') 
     plt.bar(X_axis + 0.1, total_chain[1], 0.1, label = 'HIGH CPU-SLOW SPEED') 
@@ -90,6 +93,7 @@ def full_analysis(dirname):
     plt.title("Full chain in blockchain") 
     plt.legend() 
     plt.savefig("full_chain_contrib_comp.png") 
+    plt.close()
 
 
 
@@ -214,17 +218,16 @@ def do_ratio_analysis(bc_info,node_info):
 
 if __name__ == "__main__":
     parse = argparse.ArgumentParser()
-    parse.add_argument("--blockchain_tree", type=str, default=None, action="store_true")
-    parse.add_argument("--ratio_analysis",action="store_true")
+    parse.add_argument("--blockchain_tree", type=str, default=None)
+    parse.add_argument("--ratio_analysis", type=str, default=None)
     parse.add_argument("--node_info", type=str,default=None)
     parse.add_argument("--blockchain_info", type=str,default=None)
     parse.add_argument("--full_analysis", type=str, default=None)
     args = parse.parse_args()
     if args.full_analysis:
         full_analysis(args.full_analysis)
-    if args.blockchain_tree:
+    if args.blockchain_info:
         make_blockchain_tree(args.blockchain_info)
     if args.ratio_analysis:
         do_ratio_analysis(args.blockchain_info,args.node_info)
         make_blockchain_tree(args.blockchain_tree)
-        plt.show()
