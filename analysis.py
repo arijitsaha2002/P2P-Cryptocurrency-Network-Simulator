@@ -26,7 +26,7 @@ def make_blockchain_tree(filename):
 
 def get_title_from_filename(filename):
     params = os.path.basename(filename)[:-len(".log.csv")].split("_")[2:]
-    return {"num_peers": params[0], "mean_interarrival_block_time": params[1], "frac_low_cpu": params[2], "mean_interarrival_transaction_time": params[3], "frac_slow": params[4] }
+    return "\n".join(str({"num_peers": params[0], "mean_interarrival_block_time": params[1], "frac_low_cpu": params[2], "mean_interarrival_transaction_time": params[3], "frac_slow": params[4] }).split(','))
     
 
 
