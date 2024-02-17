@@ -17,16 +17,16 @@ def make_blockchain_tree(filename):
             T.add_edge(b, a)
 
     G = T 
-    title = get_title_from_filename(filename)
+    title = get_title_from_filename_as_dict(filename)
     plt.figure(figsize=(20,10))
     pos = graphviz_layout(G, prog='dot', args='-Grankdir="LR"')
     nx.draw_networkx_nodes(G, pos, node_size=300)
     nx.draw_networkx_edges(G, pos, edgelist=G.edges(), arrows=True, arrowstyle="<-")
     plt.title(f"{title}")
 
-# def get_title_from_filename(filename):
-    # params = os.path.basename(filename)[:-len(".log.csv")].split("_")[2:]
-    # return "\n".join(str({"num_peers": params[0], "mean_interarrival_block_time": params[1], "frac_low_cpu": params[2], "mean_interarrival_transaction_time": params[3], "frac_slow": params[4] }).split(','))
+def get_title_from_filename_as_dict(filename):
+    params = os.path.basename(filename)[:-len(".log.csv")].split("_")[2:]
+    return str({"num_peers": params[0], "mean_interarrival_block_time": params[1], "frac_low_cpu": params[2], "mean_interarrival_transaction_time": params[3], "frac_slow": params[4] })
     
 
 def get_title_from_filename(filename):
@@ -81,7 +81,7 @@ def full_analysis(dirname):
     plt.xticks(X_axis, titles) 
     plt.ylabel("Average ratio of contribution of the node type") 
     plt.title("Longest chain in blockchain") 
-    plt.xlabel(str({"num_peers", "mean_interarrival_block_time", "frac_low_cpu", "mean_interarrival_transaction_time", "frac_slow"}))
+    plt.xlabel("{mean_interarrival_block_time, frac_low_cpu, mean_interarrival_transaction_time, frac_slow}")
     plt.legend() 
     plt.savefig(os.path.join(dirname, f'longest_chain_contrib_comp.png'))
     plt.close()
@@ -97,7 +97,7 @@ def full_analysis(dirname):
     plt.xticks(X_axis, titles) 
     plt.ylabel("Average ratio of contribution of the node type") 
     plt.title("Full blockchain") 
-    plt.xlabel(str({"num_peers", "mean_interarrival_block_time", "frac_low_cpu", "mean_interarrival_transaction_time", "frac_slow"}))
+    plt.xlabel("{mean_interarrival_block_time, frac_low_cpu, mean_interarrival_transaction_time, frac_slow}")
     plt.legend() 
     plt.savefig(os.path.join(dirname, f'full_chain_contrib_comp.png'))
     plt.close()
