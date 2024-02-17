@@ -23,8 +23,6 @@ def make_blockchain_tree(filename):
     nx.draw_networkx_nodes(G, pos, node_size=300)
     nx.draw_networkx_edges(G, pos, edgelist=G.edges(), arrows=True, arrowstyle="<-")
     plt.title(f"{title}")
-    plt.savefig(os.path.join(os.path.dirname(filename), f'tree_{os.path.basename(filename)[len("block_info_"):-len(".log.csv")]}.png'))
-    plt.close()
 
 def get_title_from_filename(filename):
     params = os.path.basename(filename)[:-len(".log.csv")].split("_")[2:]
@@ -56,6 +54,8 @@ def full_analysis(dirname):
     for r in ret:
         title = get_title_from_filename(r[0])
         make_blockchain_tree(os.path.join(dirname, r[0]))
+        plt.savefig(os.path.join(os.path.dirname(os.path.join(dirname, r[0])), f'tree_{os.path.basename(os.path.join(dirname, r[0]))[len("block_info_"):-len(".log.csv")]}.png'))
+        plt.close()
         titles.append(str(title))
         longest_single_chain, total_single_chain = do_ratio_analysis(os.path.join(dirname,r[0]), os.path.join(dirname,r[1]))
         longest_chain.append(longest_single_chain)
@@ -77,7 +77,7 @@ def full_analysis(dirname):
     plt.ylabel("Average ratio of contribution of the node type") 
     plt.title("Longest chain in blockchain") 
     plt.legend() 
-    plt.savefig("longest_chain_contrib_comp.png") 
+    plt.savefig(os.path.join(dirname, f'longest_chain_contrib_comp.png'))
     plt.close()
 
     X_axis = numpy.arange(len(titles)) 
@@ -92,7 +92,7 @@ def full_analysis(dirname):
     plt.ylabel("Average ratio of contribution of the node type") 
     plt.title("Full chain in blockchain") 
     plt.legend() 
-    plt.savefig("full_chain_contrib_comp.png") 
+    plt.savefig(os.path.join(dirname, f'full_chain_contrib_comp.png'))
     plt.close()
 
 
@@ -218,16 +218,13 @@ def do_ratio_analysis(bc_info,node_info):
 
 if __name__ == "__main__":
     parse = argparse.ArgumentParser()
-    parse.add_argument("--blockchain_tree", type=str, default=None)
-    parse.add_argument("--ratio_analysis", type=str, default=None)
+    parse.add_argument("--blockchain_tree", action = 'store_true')
     parse.add_argument("--node_info", type=str,default=None)
     parse.add_argument("--blockchain_info", type=str,default=None)
     parse.add_argument("--full_analysis", type=str, default=None)
     args = parse.parse_args()
     if args.full_analysis:
         full_analysis(args.full_analysis)
-    if args.blockchain_info:
+    if args.blockchain_tree:
         make_blockchain_tree(args.blockchain_info)
-    if args.ratio_analysis:
-        do_ratio_analysis(args.blockchain_info,args.node_info)
-        make_blockchain_tree(args.blockchain_tree)
+        plt.show()

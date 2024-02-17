@@ -11,6 +11,10 @@ Event::Event(long double time, event_type type)
 	this->type = type;
 }
 
+Event::~Event()
+{
+}
+
 bool Event::operator<(const Event& rhs) const
 {
 	return this->timestamp <= rhs.timestamp;

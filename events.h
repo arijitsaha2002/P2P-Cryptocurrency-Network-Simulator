@@ -53,6 +53,7 @@ class Event
 	 * Pure virtual function to simulate the event
 	 */
 	virtual void simulate_event() = 0;
+	virtual ~Event();
 };
 
 /**

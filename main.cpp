@@ -122,6 +122,7 @@ void run_loop(){
         CURRENT_TIME = (*top)->timestamp;
         (*top)->simulate_event();
         LIST_OF_EVENTS.erase(top);
+		delete *top;
     }
 }
 
