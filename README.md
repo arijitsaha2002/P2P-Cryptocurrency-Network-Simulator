@@ -120,8 +120,8 @@ For using the `full_analysis` option, put current directory containing the `bloc
 `sample_logs` directory has the sample results of simulator on various parameter combinations.
 
 The following image shows the comparison of the contribution of blocks in longest chain of different types of nodes.
-[!sample_logs/longest_chain_contrib_comp.png]
+![](sample_logs/longest_chain_contrib_comp.png)
 
 The following images are sample blockchain trees with high and low forking.
-[!sample_logs/tree_100_20.0_0.2_0.2_0.2.png]
-[!sample_logs/tree_100_1.0_0.2_0.2_0.2.png]
+![](sample_logs/tree_100_20.0_0.2_0.2_0.2.png)
+![](sample_logs/tree_100_1.0_0.2_0.2_0.2.png)
