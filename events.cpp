@@ -109,20 +109,38 @@ void GenerateBlock::create_events_for_recvrs(Block* new_block)
 void create_event_for_next_block(Node* node,long double timestamp)
 {
 	long double time = timestamp + rng.get_next_block_time(node);
-	Event* new_event = new GenerateBlock(time, node, node->get_longest_chain_tail());
-	add_event_to_queue(new_event);
+
+	/* Check if the node is selfish and has a private chain with non zero size*/
+	if(node->is_selfish() && creator_node->private_chain.size() != 0)){
+		Event* new_event = new GenerateBlock(time, node, node->private_chain.back());
+		add_event_to_queue(new_event);
+	}
+	else{
+		Event* new_event = new GenerateBlock(time, node, node->get_longest_chain_tail());
+		add_event_to_queue(new_event);
+	}
 }
 
 void GenerateBlock::simulate_event()
 {
-	if(parent_block != creator_node->get_longest_chain_tail()) {
+	if(!creator_node->is_selfish() && parent_block != creator_node->get_longest_chain_tail()) {
 		return;
 	}
+	else if(creator_node->is_selfish() && creator_node->private_chain.size() != 0){
+		return;
+	}
+	
 	Block* new_block = new Block(creator_node->get_id(), parent_block);
+
 	creator_node -> populate_block(new_block, this->start_time);
 	assert(this->start_time < CURRENT_TIME);
 
-	create_events_for_recvrs(new_block);
+	if(!create_node->is_selfish()){
+		create_events_for_recvrs(new_block);
+	}
+	else{
+		creator_node->private_chain.push(new_block);
+	}
 	create_event_for_next_block(creator_node, this->timestamp);
 }
 
@@ -139,10 +157,47 @@ void BlockRecieved::simulate_event()
 	if(!(reciever_node -> add_block_to_tree(block))) {
 		return;
 	}
+	
+	/* Check if this block leads to new longest chain */
+	if(reciever_node -> get_longest_chain_tail() != block)
+		return ;
 
-	/* Send block to peers */
+	if(reciever_node->is_selfish()){
+		/* If the node is selfish then check the length of LVC (longest visible chain) and update the private chain accordingly and braodcast private blocks if necessary*/
+
+		if(reciever_node->private_chain.back()->get_length_of_chain() < reciever_node->get_longest_chain_tail->get_length_of_chain()){
+
+			/*Empty the  private chain*/
+			while(!reciever_node->private_chain.empty()){
+				reciever_node->private_chain.pop();
+			}
+		}
+		else{
+			/*Braodcast till the height gets equal for both the forks*/
+			while(reciever_node->private_chain.front()->get_length_of_chain() <= reciever_node->get_longest_chain_tail->get_length_of_chain()){
+				Block* private_blk = reciever_node->private_chain.front();
+				private_blk->users_recv_time[reciever_node->get_id()] = this->timestamp;
+
+				vector<Node*> nodes = reciever_node->get_neighbours();
+
+				/* Send block to peers */
+				for(unsigned int i=0; i < nodes.size();i++) {
+					if(nodes[i] != sender_node) {
+						long double time = this->timestamp + rng.get_latency_between_nodes(reciever_node, nodes[i], block->get_size());
+						Event* new_event = new BlockRecieved(time, private_blk, nodes[i], reciever_node);
+						add_event_to_queue(new_event);
+					}
+				}
+				reciever_node->private_chain.pop();
+			}
+		}
+		create_event_for_next_block(reciever_node, this->timestamp);
+		return;
+	}
+
 	vector<Node*> nodes = reciever_node->get_neighbours();
 
+	/* Send block to peers */
 	for(unsigned int i=0; i < nodes.size();i++) {
 		if(nodes[i] != sender_node) {
 			long double time = this->timestamp + rng.get_latency_between_nodes(reciever_node, nodes[i], block->get_size());
@@ -150,11 +205,6 @@ void BlockRecieved::simulate_event()
 			add_event_to_queue(new_event);
 		}
 	}
-
-	/* Check if this block leads to new longest chain */
-	if(reciever_node -> get_longest_chain_tail() != block)
-		return ;
-
 	/* 
 	 * Longest chain changed
 	 * Remove generate block event from queue

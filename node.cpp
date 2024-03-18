@@ -150,8 +150,18 @@ void Node::add_node(Node* neighbour){
  * @param start_time The time at which the block construction starts
  */
 void Node::populate_block(Block* blk, long double start_time){
+
 	unordered_map<int, Transaction*> mem_pool_copy = get_mem_pool();
-	Block* end_blk = get_longest_chain_tail();
+	Block* end_blk = blk->prev_blk();
+	
+	/* sanity check */
+	if(this->selfish){
+		assert(this->private_chain.back() == end_blk);
+	}
+	else{
+		assert(this->longest_chain_tail == end_blk);
+	}
+
 	while(end_blk->blk_id != 0){
 		for(auto txn: end_blk->transactions){
 			if(mem_pool_copy.find(txn->get_tid()) != mem_pool_copy.end()){
@@ -175,4 +185,16 @@ void Node::populate_block(Block* blk, long double start_time){
 
 int Node::get_capability(){
 	return this->capabilities;
+}
+
+bool Node::is_selfish(){
+	return false;
+}
+
+SelfishNode::SelfishNode(int node_id, int capabilities, Block* genesis_block):Node(node_id, capabilities, genesis_block){
+	this->private_chain = queue<Block*>();
+}
+
+bool SelfishNode::is_selfish(){
+	return true;
 }

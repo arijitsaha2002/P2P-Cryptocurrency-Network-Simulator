@@ -14,6 +14,8 @@
 #include <ext/pb_ds/tree_policy.hpp>
 #include <unordered_map>
 #include <map>
+#include <queue>
+
 using namespace std;
 
 #define MIN_DEGREE 3

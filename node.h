@@ -16,6 +16,7 @@
 #define NODE_SLOW	0x2
 #define NODE_LOW_CPU	0x4
 #define NODE_FAST_CPU	0x8
+#define NODE_SELFISH	0x10
 
 using namespace std;
 
@@ -25,6 +26,7 @@ using namespace std;
  * Class for a node
  */
 class Node {
+protected:
     int node_id;
 	int capabilities;
 	long double hashing_power;
@@ -75,6 +77,16 @@ public:
 
 	/** add blocks whose parent has arrived*/
 	void add_pending_child_blocks(Block* blk);
+
+	/** check whether the miner is selfish or not*/
+	virtual bool is_selfish();
+};
+
+class SelfishNode : public Node {
+public:
+	queue<Block*> private_chain;
+	SelfishNode(int node_id, int capabilities, Block* genesis_block);
+	bool is_selfish();
 };
 
 #endif
