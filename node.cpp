@@ -22,7 +22,8 @@ Node::Node(int node_id){
  * @param capabilities The capabilities of the node
  * @param genesis_block The genesis block of the blockchain
  */
-Node::Node(int node_id, int capabilities, Block* genesis_block){
+Node::Node(int node_id, int capabilities, Block* genesis_block, bool selfish = false){
+
 	this->node_id = node_id;
 	this->capabilities = capabilities;
 
@@ -37,6 +38,15 @@ Node::Node(int node_id, int capabilities, Block* genesis_block){
 		this->hashing_power = 10 * low_cpu_hash_power;
 	}
 	this->longest_chain_tail = genesis_block;
+
+	if(selfish) {
+		this->selfish = true;
+		this->private_chain = new queue<Block*>();
+	}
+	else{
+		this->selfish = false;
+		this->private_chain = NULL;
+	}
 }
 
 /**
@@ -156,7 +166,7 @@ void Node::populate_block(Block* blk, long double start_time){
 	
 	/* sanity check */
 	if(this->selfish){
-		assert(this->private_chain.back() == end_blk);
+		assert(this->private_chain->back() == end_blk);
 	}
 	else{
 		assert(this->longest_chain_tail == end_blk);
@@ -188,13 +198,5 @@ int Node::get_capability(){
 }
 
 bool Node::is_selfish(){
-	return false;
-}
-
-SelfishNode::SelfishNode(int node_id, int capabilities, Block* genesis_block):Node(node_id, capabilities, genesis_block){
-	this->private_chain = queue<Block*>();
-}
-
-bool SelfishNode::is_selfish(){
-	return true;
+	return is_selfish;
 }
