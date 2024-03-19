@@ -146,6 +146,7 @@ class BlockRecieved: public Event
 	Block* block;
 	Node* reciever_node;
 	Node* sender_node;
+	void create_events_for_recvrs(Block* new_block);
 
 	public:
 	void simulate_event();
@@ -159,7 +160,6 @@ class BlockRecieved: public Event
 	 * @param sender_node The node which sends the block
 	 */
 	BlockRecieved(long double time, Block* block, Node* reciever_node, Node* sender_node);
-	void create_events_for_recvrs(Block* new_block);
 };
 
 #endif

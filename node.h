@@ -28,7 +28,7 @@ using namespace std;
 class Node {
 private:
     int node_id;
-	bool is_selfish;
+	bool selfish;
 	int capabilities;
 	long double hashing_power;
     vector<Node*> connected_peers;
