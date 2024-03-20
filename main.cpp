@@ -1,6 +1,10 @@
 #include "events.h"
+#include "node.h"
 #include <algorithm>
+#include <sstream>
 #include <string>
+#include "parser.h"
+
 
 struct EventCMP {
 	 bool operator()(Event * event1, Event * event2) const {
@@ -45,11 +49,11 @@ vector<Block*> LIST_OF_BLOCKS;
  */
 long double CURRENT_TIME = 0, MEAN_TRANSACTION_INTER_ARRIVAL_TIME = 0.75;
 int MAX_USERS;
-float Z0 = 0.4, Z1 = 0.3;
-int MAX_BLOCKS = 250;
-int INITIAL_AMOUNT = 50;
+float Z0, Z1;
+int MAX_BLOCKS;
+int INITIAL_AMOUNT;
 long double AVG_INTERARRIVAL_BLOCK_TIME = 10;
-int MAX_TRANSACTIONS = -1;
+int MAX_TRANSACTIONS;
 
 
 pair<int, int> getSortedPair(int a, int b) {
@@ -117,11 +121,16 @@ void init(string file_name){
 	
 	MAX_USERS = numberOfPeers;
 
+	int numberOfHonestPeers = numberOfPeers - 2;
 	// Initializing the capabilities of all the nodes in the network
-	vector<int> Z0_distribution(Z0*numberOfPeers, NODE_SLOW);
+	vector<int> Z0_distribution(Z0*numberOfHonestPeers, NODE_SLOW);
 	vector<int> Z1_distribution(Z1*numberOfPeers, NODE_LOW_CPU);
 
 	while((int) Z0_distribution.size() != numberOfPeers) Z0_distribution.push_back(NODE_FAST);
+	
+	Z0_distribution[numberOfPeers - 1] = NODE_SELFISH;
+	Z0_distribution[numberOfPeers - 2] = NODE_SELFISH;
+
 	while((int) Z1_distribution.size() != numberOfPeers) Z1_distribution.push_back(NODE_FAST_CPU);
  
 	shuffle(Z0_distribution.begin(), Z0_distribution.end(), rng.gen);
@@ -129,7 +138,12 @@ void init(string file_name){
 
 	// create the nodes in the network
     for(int i = 0; i < numberOfPeers; i ++){
-        LIST_OF_NODES.push_back(new Node(i, Z0_distribution[i] | Z1_distribution[i], GENESIS_BLOCK));
+		if(Z0_distribution[i] != NODE_SELFISH){
+	        LIST_OF_NODES.push_back(new Node(i, Z0_distribution[i] | Z1_distribution[i], GENESIS_BLOCK));
+		}
+		else{
+	        LIST_OF_NODES.push_back(new Node(i, NODE_FAST | Z1_distribution[i], GENESIS_BLOCK, true));
+		}
     }
     
     for(int i = 0; i < numberOfEdges; i ++){
@@ -216,20 +230,31 @@ void log_data(string suffix){
  * @brief The main function to run the simulation
  */
 int main(int argc, char * argv[]){
-	if(argc != 11){
-		cerr << "Use blockSimWrapper.py\n";
-		return 1;
-	}
-	string file_name(argv[3]);
-	INITIAL_AMOUNT = atoi(argv[1]);
-	MAX_BLOCKS = atoi(argv[2]);
-	AVG_INTERARRIVAL_BLOCK_TIME = atof(argv[4]);
-	Z1 = atof(argv[5]);
-	rng.set_seed(atoi(argv[6]));
-	MEAN_TRANSACTION_INTER_ARRIVAL_TIME = atof(argv[7]);
-	MAX_TRANSACTIONS = atoi(argv[8]);
-	Z0 = atof(argv[9]);
-	string suffix(argv[10]);
+
+    struct arguments args = {0, 0, false};
+    struct argp argp = {options, parse_opt, args_doc, doc, 0, 0, 0};
+
+	string file_name;
+	string suffix;
+
+    if (argp_parse(&argp, argc, argv, 0, 0, &args) == 0) {
+		file_name = args.graph;
+		INITIAL_AMOUNT = args.initial_amt;
+		MAX_BLOCKS = args.max_blocks;
+		AVG_INTERARRIVAL_BLOCK_TIME = args.interarrival_block_time;
+		Z1 = args.frac_low_cpu;
+		rng.set_seed(args.seed);
+		MEAN_TRANSACTION_INTER_ARRIVAL_TIME = args.interarrival_transaction_time;
+		MAX_TRANSACTIONS = args.max_transactions;
+		stringstream ss;
+		ss << args.num_peers << "_" << args.interarrival_block_time << "_" << args.frac_low_cpu << "_" << args.interarrival_transaction_time << "_" << args.frac_slow << ".log.csv";
+		suffix = ss.str();
+
+    } else {
+        std::cerr << "Failed to parse arguments" << std::endl;
+        return 1;
+    }
+
 	init(file_name);
 	CURRENT_TIME = 0;
 	create_initial_events();

@@ -212,7 +212,8 @@ void BlockRecieved::simulate_event()
 	create_event_for_next_block(reciever_node,this->timestamp);
 }
 
-BlockRecieved::create_events_for_recvrs(Block* new_block){
+void BlockRecieved::create_events_for_recvrs(Block* new_block)
+{
 	
 	vector<Node*> recvrs = reciever_node->get_neighbours();
 
