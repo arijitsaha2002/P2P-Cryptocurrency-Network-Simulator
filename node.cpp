@@ -22,7 +22,7 @@ Node::Node(int node_id){
  * @param capabilities The capabilities of the node
  * @param genesis_block The genesis block of the blockchain
  */
-Node::Node(int node_id, int capabilities, Block* genesis_block, bool selfish = false){
+Node::Node(int node_id, int capabilities, Block* genesis_block, bool selfish){
 
 	this->node_id = node_id;
 	this->capabilities = capabilities;
@@ -162,10 +162,10 @@ void Node::add_node(Node* neighbour){
 void Node::populate_block(Block* blk, long double start_time){
 
 	unordered_map<int, Transaction*> mem_pool_copy = get_mem_pool();
-	Block* end_blk = blk->prev_blk();
+	Block* end_blk = blk->prev_blk;
 	
 	/* sanity check */
-	if(this->selfish){
+	if(this->selfish and this->private_chain->size()){
 		assert(this->private_chain->back() == end_blk);
 	}
 	else{
@@ -198,5 +198,10 @@ int Node::get_capability(){
 }
 
 bool Node::is_selfish(){
-	return is_selfish;
+	return selfish;
 }
+
+void Node::set_longest_chain_tail(Block* new_longest_chain_tail){
+	this->longest_chain_tail = new_longest_chain_tail;
+}
+

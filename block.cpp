@@ -43,7 +43,7 @@ Transaction::Transaction(int sender) {
 	while(receiver == sender)	receiver = rng.uniformNumber(0, MAX_USERS-1);
 	this -> receiver = receiver;
 
-	this -> amount = TransactionAmount(sender);
+	this -> amount = TransactionAmount();
 
 	this -> sz = TRANSACTION_SIZE;
 	this -> timestamp = CURRENT_TIME;

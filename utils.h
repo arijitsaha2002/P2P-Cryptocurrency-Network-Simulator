@@ -34,7 +34,7 @@ extern vector<Node *> LIST_OF_NODES;
 extern long double CURRENT_TIME;
 
 pair<int, int> getSortedPair(int, int);
-int TransactionAmount(uid_t sender);
+int TransactionAmount();
 void add_event_to_queue(Event *e);
 void add_transaction_to_mempool(Transaction* new_transaction);
 void add_event_to_queue(Event* new_event);

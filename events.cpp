@@ -111,7 +111,7 @@ void create_event_for_next_block(Node* node,long double timestamp)
 	long double time = timestamp + rng.get_next_block_time(node);
 
 	/* Check if the node is selfish and has a private chain with non zero size*/
-	if(node->is_selfish() && creator_node->private_chain->size() == 0)){
+	if(node->is_selfish() && node->private_chain->size() != 0){
 		Event* new_event = new GenerateBlock(time, node, node->private_chain->back());
 		add_event_to_queue(new_event);
 	}
@@ -135,7 +135,7 @@ void GenerateBlock::simulate_event()
 	creator_node -> populate_block(new_block, this->start_time);
 	assert(this->start_time < CURRENT_TIME);
 
-	if(!create_node->is_selfish()){
+	if(!creator_node->is_selfish()){
 		create_events_for_recvrs(new_block);
 	}
 	else{
@@ -166,25 +166,29 @@ void BlockRecieved::simulate_event()
 
 		/* If the node is selfish then check the length of LVC (longest visible chain) and update the private chain accordingly and braodcast private blocks if necessary*/
 
-		if(reciever_node->private_chain->back()->get_length_of_chain() < reciever_node->get_longest_chain_tail->get_length_of_chain()){
+		if(reciever_node->private_chain->empty() || reciever_node->private_chain->back()->get_length_of_chain() < reciever_node->get_longest_chain_tail()->get_length_of_chain()){
 
 			/*Empty the  private chain*/
 			while(!reciever_node->private_chain->empty()){
 				reciever_node->private_chain->pop();
 			}
+
+			create_event_for_next_block(reciever_node, this->timestamp);
 		}
 		else{
 			/*Braodcast till the height gets equal for both the forks*/
-			while(reciever_node->private_chain->front()->get_length_of_chain() <= reciever_node->get_longest_chain_tail->get_length_of_chain()){
+			Block* last_block_updated = nullptr;
+			while(reciever_node->private_chain->front()->get_length_of_chain() <= reciever_node->get_longest_chain_tail()->get_length_of_chain()){
 
 				Block* private_blk = reciever_node->private_chain->front();
+				last_block_updated = private_blk;
 				private_blk->users_recv_time[reciever_node->get_id()] = this->timestamp;
-
-				create_events_for_recvrs(private_blk);
+				reciever_node->set_longest_chain_tail(private_blk);
 				reciever_node->private_chain->pop();
 			}
+			if(last_block_updated != nullptr)
+				reciever_node->set_longest_chain_tail(last_block_updated);
 		}
-		create_event_for_next_block(reciever_node, this->timestamp);
 		return;
 	}
 

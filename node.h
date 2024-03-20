@@ -35,7 +35,6 @@ private:
     set<Transaction*> trasaction_pool;
     Block* longest_chain_tail;
 	unordered_map<int, vector<Block*>> ukn_blocks;
-	queue<Block*>* private_chain;
 	/**
 	 * @brief Function to update the longest chain tail
 	 *
@@ -45,6 +44,7 @@ private:
 	void update_longest_chain_tail_recursively(Block* blk);
 	
 public:
+	queue<Block*>* private_chain;
     Node(int node_id);
 	/**
 	 * @brief Constructor for Node
@@ -53,7 +53,7 @@ public:
 	 * @param capabilities The capabilities of the node
 	 * @param genesis_block The genesis block of the blockchain
 	 */
-	Node(int node_id, int capabilities, Block* genesis_block);
+	Node(int node_id, int capabilities, Block* genesis_block, bool selfish = false);
 
 	/** update transaction in the transaction pool */
     bool add_transaction(Transaction* txn);
@@ -82,6 +82,8 @@ public:
 
 	/** check whether the miner is selfish or not*/
 	bool is_selfish();
+
+	void set_longest_chain_tail(Block* new_longest_chain_tail);
 };
 
 #endif

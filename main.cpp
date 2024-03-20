@@ -68,7 +68,7 @@ void add_transaction_to_mempool(Transaction* new_transaction){
 	mempool[new_transaction->get_tid()] = new_transaction;
 }
 
-int TransactionAmount(uid_t sender){
+int TransactionAmount(){
     int low = 0;
     int high = 50;
     return rng.uniformNumber(low, high);
@@ -231,12 +231,11 @@ void log_data(string suffix){
  */
 int main(int argc, char * argv[]){
 
-    struct arguments args = {0, 0, false};
-    struct argp argp = {options, parse_opt, args_doc, doc, 0, 0, 0};
+	struct arguments args = { 0.1, 10, 250, 50, 0.4, 0.4, 44, -1, (char *)"graph"};
+    struct argp argp = {options, parse_opt, 0, 0, 0, 0, 0};
 
 	string file_name;
 	string suffix;
-
     if (argp_parse(&argp, argc, argv, 0, 0, &args) == 0) {
 		file_name = args.graph;
 		INITIAL_AMOUNT = args.initial_amt;
@@ -246,9 +245,6 @@ int main(int argc, char * argv[]){
 		rng.set_seed(args.seed);
 		MEAN_TRANSACTION_INTER_ARRIVAL_TIME = args.interarrival_transaction_time;
 		MAX_TRANSACTIONS = args.max_transactions;
-		stringstream ss;
-		ss << args.num_peers << "_" << args.interarrival_block_time << "_" << args.frac_low_cpu << "_" << args.interarrival_transaction_time << "_" << args.frac_slow << ".log.csv";
-		suffix = ss.str();
 
     } else {
         std::cerr << "Failed to parse arguments" << std::endl;
@@ -256,6 +252,10 @@ int main(int argc, char * argv[]){
     }
 
 	init(file_name);
+	stringstream ss;
+	ss << MAX_USERS << "_" << args.interarrival_block_time << "_" << args.frac_low_cpu 
+		<< "_" << args.interarrival_transaction_time << "_" << args.frac_slow << ".log.csv";
+	suffix = ss.str();
 	CURRENT_TIME = 0;
 	create_initial_events();
 	run_loop();

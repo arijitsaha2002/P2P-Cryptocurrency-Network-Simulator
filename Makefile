@@ -6,7 +6,7 @@ all: block.o utils.o events.o node.o main.o
 	$(CPP) $(CPPFLAGS) -o blockSim main.o block.o utils.o events.o node.o
 	chmod +x blockSim blockSimWrapper.py
 
-main.o: main.cpp utils.h node.h events.h Makefile
+main.o: main.cpp utils.h node.h events.h Makefile parser.h
 	$(CPP) $(CPPFLAGS) -c main.cpp
 
 block.o: utils.h block.h block.cpp Makefile
