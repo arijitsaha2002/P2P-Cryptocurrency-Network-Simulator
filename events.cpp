@@ -126,7 +126,7 @@ void GenerateBlock::simulate_event()
 	if(!creator_node->is_selfish() && parent_block != creator_node->get_longest_chain_tail()) {
 		return;
 	}
-	else if(creator_node->is_selfish() && creator_node->private_chain->size() != 0){
+	else if(creator_node->is_selfish() && creator_node->private_chain->size() == 0){
 		return;
 	}
 	
@@ -161,7 +161,7 @@ void BlockRecieved::simulate_event()
 	if(reciever_node->is_selfish()){
 
 		/*If no change in lvc then continue mining the current block*/
-		if(reciever_node->get_longest_chain_tail() != block)
+		if(reciever_node->get_longest_chain_tail()->get_length_of_chain() < block->get_length_of_chain())
 			return;
 
 		/* If the node is selfish then check the length of LVC (longest visible chain) and update the private chain accordingly and braodcast private blocks if necessary*/
@@ -182,8 +182,9 @@ void BlockRecieved::simulate_event()
 
 				Block* private_blk = reciever_node->private_chain->front();
 				last_block_updated = private_blk;
-				private_blk->users_recv_time[reciever_node->get_id()] = this->timestamp;
-				reciever_node->set_longest_chain_tail(private_blk);
+				reciever_node->add_block_to_tree(private_blk);
+				
+				create_events_for_recvrs(private_blk);
 				reciever_node->private_chain->pop();
 			}
 			if(last_block_updated != nullptr)

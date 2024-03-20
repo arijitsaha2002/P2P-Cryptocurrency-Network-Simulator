@@ -231,7 +231,7 @@ void log_data(string suffix){
  */
 int main(int argc, char * argv[]){
 
-	struct arguments args = { 0.1, 10, 250, 50, 0.4, 0.4, 44, -1, (char *)"graph"};
+	struct arguments args = { 0.1, 10, 100, 50, 0.4, 0.4, 44, -1, (char *)"graph"};
     struct argp argp = {options, parse_opt, 0, 0, 0, 0, 0};
 
 	string file_name;
