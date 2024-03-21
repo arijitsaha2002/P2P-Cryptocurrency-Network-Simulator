@@ -22,21 +22,11 @@ Node::Node(int node_id){
  * @param capabilities The capabilities of the node
  * @param genesis_block The genesis block of the blockchain
  */
-Node::Node(int node_id, int capabilities, Block* genesis_block, bool selfish){
+Node::Node(int node_id, int capabilities, Block* genesis_block, bool selfish, float hashing_power){
 
 	this->node_id = node_id;
 	this->capabilities = capabilities;
-
-	unsigned int low_cpu_node_cnt = Z1*MAX_USERS;
-	unsigned int high_cpu_node_cnt = MAX_USERS - low_cpu_node_cnt;
-	long double low_cpu_hash_power = 1.0 / (10*high_cpu_node_cnt + 1*low_cpu_node_cnt);
-
-	if(capabilities & NODE_LOW_CPU){
-		this->hashing_power = low_cpu_hash_power;
-	}
-	else{
-		this->hashing_power = 10 * low_cpu_hash_power;
-	}
+	this->hashing_power = hashing_power;
 	this->longest_chain_tail = genesis_block;
 
 	if(selfish) {

@@ -53,7 +53,7 @@ public:
 	 * @param capabilities The capabilities of the node
 	 * @param genesis_block The genesis block of the blockchain
 	 */
-	Node(int node_id, int capabilities, Block* genesis_block, bool selfish = false);
+	Node(int node_id, int capabilities, Block* genesis_block, bool selfish, float hashing_power);
 
 	/** update transaction in the transaction pool */
     bool add_transaction(Transaction* txn);

@@ -49,7 +49,7 @@ vector<Block*> LIST_OF_BLOCKS;
  */
 long double CURRENT_TIME = 0, MEAN_TRANSACTION_INTER_ARRIVAL_TIME = 0.75;
 int MAX_USERS;
-float Z0, Z1;
+float g1, g2, Z0;
 int MAX_BLOCKS;
 int INITIAL_AMOUNT;
 long double AVG_INTERARRIVAL_BLOCK_TIME = 10;
@@ -124,25 +124,23 @@ void init(string file_name){
 	int numberOfHonestPeers = numberOfPeers - 2;
 	// Initializing the capabilities of all the nodes in the network
 	vector<int> Z0_distribution(Z0*numberOfHonestPeers, NODE_SLOW);
-	vector<int> Z1_distribution(Z1*numberOfPeers, NODE_LOW_CPU);
-
 	while((int) Z0_distribution.size() != numberOfPeers) Z0_distribution.push_back(NODE_FAST);
 	
 	Z0_distribution[numberOfPeers - 1] = NODE_SELFISH;
 	Z0_distribution[numberOfPeers - 2] = NODE_SELFISH;
-
-	while((int) Z1_distribution.size() != numberOfPeers) Z1_distribution.push_back(NODE_FAST_CPU);
- 
 	shuffle(Z0_distribution.begin(), Z0_distribution.end(), rng.gen);
-	shuffle(Z1_distribution.begin(), Z1_distribution.end(), rng.gen);
+	assert(g1+g2 < 1);
+	float honest_node_hashing_power = (float)(1 - g1 - g2)/(float)numberOfHonestPeers;
+	int index_selfish_miner = 0;
+	
+	float g[2]= {g1, g2};
 
-	// create the nodes in the network
     for(int i = 0; i < numberOfPeers; i ++){
 		if(Z0_distribution[i] != NODE_SELFISH){
-	        LIST_OF_NODES.push_back(new Node(i, Z0_distribution[i] | Z1_distribution[i], GENESIS_BLOCK));
+	        LIST_OF_NODES.push_back(new Node(i, Z0_distribution[i], GENESIS_BLOCK, false, honest_node_hashing_power));
 		}
 		else{
-	        LIST_OF_NODES.push_back(new Node(i, NODE_FAST | Z1_distribution[i], GENESIS_BLOCK, true));
+	        LIST_OF_NODES.push_back(new Node(i, NODE_FAST, GENESIS_BLOCK, true, g[index_selfish_miner++]));
 		}
     }
     
@@ -231,7 +229,7 @@ void log_data(string suffix){
  */
 int main(int argc, char * argv[]){
 
-	struct arguments args = { 0.1, 10, 100, 50, 0.4, 0.4, 44, -1, (char *)"graph"};
+	struct arguments args = { 0.1, 10, 10, 50, 0.4, 44, -1, (char *)"graph", 0.3, 0.3};
     struct argp argp = {options, parse_opt, 0, 0, 0, 0, 0};
 
 	string file_name;
@@ -241,10 +239,11 @@ int main(int argc, char * argv[]){
 		INITIAL_AMOUNT = args.initial_amt;
 		MAX_BLOCKS = args.max_blocks;
 		AVG_INTERARRIVAL_BLOCK_TIME = args.interarrival_block_time;
-		Z1 = args.frac_low_cpu;
 		rng.set_seed(args.seed);
 		MEAN_TRANSACTION_INTER_ARRIVAL_TIME = args.interarrival_transaction_time;
 		MAX_TRANSACTIONS = args.max_transactions;
+		g1 = args.g1;
+		g2 = args.g2;
 
     } else {
         std::cerr << "Failed to parse arguments" << std::endl;
@@ -253,8 +252,8 @@ int main(int argc, char * argv[]){
 
 	init(file_name);
 	stringstream ss;
-	ss << MAX_USERS << "_" << args.interarrival_block_time << "_" << args.frac_low_cpu 
-		<< "_" << args.interarrival_transaction_time << "_" << args.frac_slow << ".log.csv";
+	ss << MAX_USERS << "_" << args.interarrival_block_time << "_" <<
+		args.interarrival_transaction_time << "_" << g1 << "_" << g2 << ".log.csv";
 	suffix = ss.str();
 	CURRENT_TIME = 0;
 	create_initial_events();
