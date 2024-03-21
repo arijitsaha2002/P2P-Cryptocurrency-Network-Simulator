@@ -1,7 +1,8 @@
 #!/bin/bash
 nPeers=100
 echo -n > cmds_to_run
-python3 graph.py $nPeers > graph_$nPeers
+mkdir -p logs/
+python3 graph.py $nPeers > logs/graph_$nPeers
 
 for g1 in {0.3,0.4,0.5}; 
 do
@@ -15,9 +16,10 @@ do
 			--frac_slow 0.5 \
 			--seed 42 \
 			--max_transactions -1 \
-			--graph "graph_$nPeers" \
+			--graph "logs/graph_$nPeers" \
 			--g1 "$g1" \
 			--g2 "$g2" >> cmds_to_run;
 	done;
 done;
+rm cmds_to_run
 #python3 script.py

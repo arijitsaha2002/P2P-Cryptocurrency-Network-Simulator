@@ -191,7 +191,8 @@ void run_loop(){
  * @brief The function to log the data of the simulation
  */
 void log_data(string suffix){
-	FILE* f = fopen(("block_info"+suffix).c_str(), "w");
+	string prefix = "logs/";
+	FILE* f = fopen((prefix+"block_info"+suffix).c_str(), "w");
 	fprintf(f, "id,pid,create_time,creator\n");
 
 	for(auto curr_blk: LIST_OF_BLOCKS){
@@ -200,7 +201,7 @@ void log_data(string suffix){
 	}
 	fclose(f);
 
-	f = fopen(("node_info"+suffix).c_str(),"w");
+	f = fopen((prefix+"node_info"+suffix).c_str(),"w");
 	fprintf(f,"id,is_fast\n");
 	for(auto curr_node: LIST_OF_NODES)
 	{
@@ -210,7 +211,7 @@ void log_data(string suffix){
 
 	//for(int i = 0;i< MAX_USERS;i++)
 	//{
-		//f = fopen(("block_recieve_node"+to_string(i)+suffix).c_str(),"w");
+		//f = fopen((prefix+"block_recieve_node"+to_string(i)+suffix).c_str(),"w");
 		//fprintf(f,"id,timestamp\n");
 		//for(auto curr_blk: LIST_OF_BLOCKS)
 		//{
