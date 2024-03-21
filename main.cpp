@@ -131,13 +131,12 @@ void init(string file_name){
 
 
 	float honest_node_hashing_power = (float)(1 - g1 - g2)/(float)numberOfHonestPeers;
-	int index_selfish_miner = 0;
 	
-	LIST_OF_NODES.push_back(new Node(i, NODE_FAST, GENESIS_BLOCK, true, g1));
-	LIST_OF_NODES.push_back(new Node(i, NODE_FAST, GENESIS_BLOCK, true, g2));
+	LIST_OF_NODES.push_back(new Node(0, NODE_FAST, GENESIS_BLOCK, true, g1));
+	LIST_OF_NODES.push_back(new Node(1, NODE_FAST, GENESIS_BLOCK, true, g2));
 
     for(int i = 0; i < numberOfHonestPeers; i ++){
-		LIST_OF_NODES.push_back(new Node(i, Z0_distribution[i], GENESIS_BLOCK, false, honest_node_hashing_power));
+		LIST_OF_NODES.push_back(new Node(i+2, Z0_distribution[i], GENESIS_BLOCK, false, honest_node_hashing_power));
     }
     
     for(int i = 0; i < numberOfEdges; i ++){
@@ -205,7 +204,7 @@ void log_data(string suffix){
 	fprintf(f,"id,is_fast\n");
 	for(auto curr_node: LIST_OF_NODES)
 	{
-		fprintf(f,"%d,%d,%d\n",curr_node -> get_id(),(bool)(curr_node->get_capability() & NODE_FAST));
+		fprintf(f,"%d,%d\n",curr_node -> get_id(),(bool)(curr_node->get_capability() & NODE_FAST));
 	}
 	fclose(f);
 

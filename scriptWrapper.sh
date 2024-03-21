@@ -21,5 +21,5 @@ do
 			--g2 "$g2" >> cmds_to_run;
 	done;
 done;
-rm cmds_to_run
-#python3 script.py
+python3 script.py
+#rm cmds_to_run
