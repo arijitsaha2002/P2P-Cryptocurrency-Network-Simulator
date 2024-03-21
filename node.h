@@ -14,8 +14,6 @@
 
 #define NODE_FAST	0x1
 #define NODE_SLOW	0x2
-#define NODE_LOW_CPU	0x4
-#define NODE_FAST_CPU	0x8
 #define NODE_SELFISH	0x10
 
 using namespace std;

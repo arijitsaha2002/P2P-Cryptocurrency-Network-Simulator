@@ -1,23 +1,23 @@
-b=500
-a=50
-s=69
+#!/bin/bash
+nPeers=100
 echo -n > cmds_to_run
-for nPeers in {100,500}
-do
-        python3 graph.py $nPeers > graph_$nPeers
-        for k in {1,10,50,100}
-        do
-                for o in {0.2,0.4}
-                do
-                        for t in {0.2,0.5,1.0}
-                        do
-                                for z in {0.2,0.4}
-                                do
-                                        echo python3 blockSimWrapper.py -a $a -b $b -k $k -o $o -s $s -t $t -z $z -n $nPeers >> cmds_to_run
-                                done
-                        done
-                done
-        done
-done
+python3 graph.py $nPeers > graph_$nPeers
 
-python3 script.py
+for g1 in {0.3,0.4,0.5}; 
+do
+	for g2 in {0.0,0.3};
+	do
+		echo ./blockSim \
+			--interarrival_transaction_time 0.1 \
+			--interarrival_block_time 10 \
+			--max_blocks 100 \
+			--initial_amt 50 \
+			--frac_slow 0.5 \
+			--seed 42 \
+			--max_transactions -1 \
+			--graph "graph_$nPeers" \
+			--g1 "$g1" \
+			--g2 "$g2" >> cmds_to_run;
+	done;
+done;
+#python3 script.py

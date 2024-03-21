@@ -124,24 +124,20 @@ void init(string file_name){
 	int numberOfHonestPeers = numberOfPeers - 2;
 	// Initializing the capabilities of all the nodes in the network
 	vector<int> Z0_distribution(Z0*numberOfHonestPeers, NODE_SLOW);
-	while((int) Z0_distribution.size() != numberOfPeers) Z0_distribution.push_back(NODE_FAST);
-	
-	Z0_distribution[numberOfPeers - 1] = NODE_SELFISH;
-	Z0_distribution[numberOfPeers - 2] = NODE_SELFISH;
+	while((int) Z0_distribution.size() != numberOfHonestPeers) Z0_distribution.push_back(NODE_FAST);
 	shuffle(Z0_distribution.begin(), Z0_distribution.end(), rng.gen);
+	
 	assert(g1+g2 < 1);
+
+
 	float honest_node_hashing_power = (float)(1 - g1 - g2)/(float)numberOfHonestPeers;
 	int index_selfish_miner = 0;
 	
-	float g[2]= {g1, g2};
+	LIST_OF_NODES.push_back(new Node(i, NODE_FAST, GENESIS_BLOCK, true, g1));
+	LIST_OF_NODES.push_back(new Node(i, NODE_FAST, GENESIS_BLOCK, true, g2));
 
-    for(int i = 0; i < numberOfPeers; i ++){
-		if(Z0_distribution[i] != NODE_SELFISH){
-	        LIST_OF_NODES.push_back(new Node(i, Z0_distribution[i], GENESIS_BLOCK, false, honest_node_hashing_power));
-		}
-		else{
-	        LIST_OF_NODES.push_back(new Node(i, NODE_FAST, GENESIS_BLOCK, true, g[index_selfish_miner++]));
-		}
+    for(int i = 0; i < numberOfHonestPeers; i ++){
+		LIST_OF_NODES.push_back(new Node(i, Z0_distribution[i], GENESIS_BLOCK, false, honest_node_hashing_power));
     }
     
     for(int i = 0; i < numberOfEdges; i ++){
@@ -199,28 +195,29 @@ void log_data(string suffix){
 	fprintf(f, "id,pid,create_time,creator\n");
 
 	for(auto curr_blk: LIST_OF_BLOCKS){
-		fprintf(f, "%d,%d,%Lf,%d\n", curr_blk->blk_id, curr_blk->prev_blk_id, curr_blk->users_recv_time[curr_blk->miner], curr_blk->miner);
+		fprintf(f, "%d,%d,%Lf,%d\n", curr_blk->blk_id, curr_blk->prev_blk_id, 
+		  curr_blk->users_recv_time[curr_blk->miner], curr_blk->miner);
 	}
 	fclose(f);
 
 	f = fopen(("node_info"+suffix).c_str(),"w");
-	fprintf(f,"id,is_fast,is_high_cpu\n");
+	fprintf(f,"id,is_fast\n");
 	for(auto curr_node: LIST_OF_NODES)
 	{
-		fprintf(f,"%d,%d,%d\n",curr_node -> get_id(),(bool)(curr_node->get_capability() & NODE_FAST),(bool)(curr_node -> get_capability() & NODE_FAST_CPU));
+		fprintf(f,"%d,%d,%d\n",curr_node -> get_id(),(bool)(curr_node->get_capability() & NODE_FAST));
 	}
 	fclose(f);
 
-	for(int i = 0;i< MAX_USERS;i++)
-	{
-		f = fopen(("block_recieve_node"+to_string(i)+suffix).c_str(),"w");
-		fprintf(f,"id,timestamp\n");
-		for(auto curr_blk: LIST_OF_BLOCKS)
-		{
-			if(curr_blk->users_recv_time[i] != -1)
-				fprintf(f,"%d,%Lf\n",curr_blk->blk_id,curr_blk->users_recv_time[i]);
-		}
-	}
+	//for(int i = 0;i< MAX_USERS;i++)
+	//{
+		//f = fopen(("block_recieve_node"+to_string(i)+suffix).c_str(),"w");
+		//fprintf(f,"id,timestamp\n");
+		//for(auto curr_blk: LIST_OF_BLOCKS)
+		//{
+			//if(curr_blk->users_recv_time[i] != -1)
+				//fprintf(f,"%d,%Lf\n",curr_blk->blk_id,curr_blk->users_recv_time[i]);
+		//}
+	//}
 
 }
 
@@ -229,7 +226,7 @@ void log_data(string suffix){
  */
 int main(int argc, char * argv[]){
 
-	struct arguments args = { 0.1, 10, 10, 50, 0.4, 44, -1, (char *)"graph", 0.3, 0.3};
+	struct arguments args = { 0.1, 10, 10, 50, 0.5, 44, -1, (char *)"graph", 0.3, 0.3};
     struct argp argp = {options, parse_opt, 0, 0, 0, 0, 0};
 
 	string file_name;
@@ -252,8 +249,11 @@ int main(int argc, char * argv[]){
 
 	init(file_name);
 	stringstream ss;
+
 	ss << MAX_USERS << "_" << args.interarrival_block_time << "_" <<
-		args.interarrival_transaction_time << "_" << g1 << "_" << g2 << ".log.csv";
+		args.interarrival_transaction_time << "_" << args.frac_slow 
+		<< "_" << g1 << "_" << g2 << ".log.csv";
+
 	suffix = ss.str();
 	CURRENT_TIME = 0;
 	create_initial_events();
