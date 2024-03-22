@@ -208,16 +208,16 @@ void log_data(string suffix){
 	}
 	fclose(f);
 
-	//for(int i = 0;i< MAX_USERS;i++)
-	//{
-		//f = fopen((prefix+"block_recieve_node"+to_string(i)+suffix).c_str(),"w");
-		//fprintf(f,"id,timestamp\n");
-		//for(auto curr_blk: LIST_OF_BLOCKS)
-		//{
-			//if(curr_blk->users_recv_time[i] != -1)
-				//fprintf(f,"%d,%Lf\n",curr_blk->blk_id,curr_blk->users_recv_time[i]);
-		//}
-	//}
+	for(int i = 0;i< MAX_USERS;i++)
+	{
+		f = fopen((prefix+"block_recieve_node"+to_string(i)+"_"+suffix).c_str(),"w");
+		fprintf(f,"id,pid\n");
+		for(auto curr_blk: LIST_OF_BLOCKS)
+		{
+			if(curr_blk->users_recv_time[i] != -1)
+				fprintf(f,"%d,%d\n",curr_blk->blk_id,curr_blk->prev_blk_id);
+		}
+	}
 
 }
 
@@ -241,6 +241,7 @@ int main(int argc, char * argv[]){
 		MAX_TRANSACTIONS = args.max_transactions;
 		g1 = args.g1;
 		g2 = args.g2;
+		Z0 = args.frac_slow;
 
     } else {
         std::cerr << "Failed to parse arguments" << std::endl;
