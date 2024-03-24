@@ -1,5 +1,5 @@
 #!/bin/bash
-nPeers=100
+nPeers=5
 echo -n > cmds_to_run
 mkdir -p logs/
 python3 graph.py $nPeers > logs/graph_$nPeers
@@ -11,7 +11,7 @@ do
 		echo ./blockSim \
 			--interarrival_transaction_time 0.1 \
 			--interarrival_block_time 10 \
-			--max_blocks 100 \
+			--max_blocks 10 \
 			--initial_amt 50 \
 			--frac_slow 0.5 \
 			--seed 42 \
@@ -22,4 +22,4 @@ do
 	done;
 done;
 python3 script.py
-#rm cmds_to_run
+rm cmds_to_run

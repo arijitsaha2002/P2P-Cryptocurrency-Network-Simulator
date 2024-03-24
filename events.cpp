@@ -126,8 +126,11 @@ void GenerateBlock::simulate_event()
 	if(!creator_node->is_selfish() && parent_block != creator_node->get_longest_chain_tail()) {
 		return;
 	}
-	else if(creator_node->is_selfish() && creator_node->private_chain->size() == 0 && parent_block != creator_node->get_longest_chain_tail()){
-		return;
+	else if(creator_node->is_selfish()){
+		if(creator_node->private_chain->size() == 0 && parent_block != creator_node->get_longest_chain_tail())
+			return;
+		if(creator_node->private_chain->size() != 0 && creator_node->private_chain->back() != parent_block)
+			return;
 	}
 	
 	Block* new_block = new Block(creator_node->get_id(), parent_block);
@@ -186,6 +189,9 @@ void BlockRecieved::simulate_event()
 				
 				create_events_for_recvrs(private_blk);
 				reciever_node->private_chain->pop();
+
+				if(reciever_node->private_chain->empty())
+					break;
 			}
 			if(last_block_updated != nullptr)
 				reciever_node->set_longest_chain_tail(last_block_updated);

@@ -1,7 +1,6 @@
 test.cpp
 *.o
 *.out
-
 .venv/*
-
+logs/
 data
