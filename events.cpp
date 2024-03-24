@@ -126,7 +126,7 @@ void GenerateBlock::simulate_event()
 	if(!creator_node->is_selfish() && parent_block != creator_node->get_longest_chain_tail()) {
 		return;
 	}
-	else if(creator_node->is_selfish() && creator_node->private_chain->size() == 0){
+	else if(creator_node->is_selfish() && creator_node->private_chain->size() == 0 && parent_block != creator_node->get_longest_chain_tail()){
 		return;
 	}
 	
@@ -166,7 +166,7 @@ void BlockRecieved::simulate_event()
 
 		/* If the node is selfish then check the length of LVC (longest visible chain) and update the private chain accordingly and braodcast private blocks if necessary*/
 
-		if(reciever_node->private_chain->empty() || reciever_node->private_chain->back()->get_length_of_chain() < reciever_node->get_longest_chain_tail()->get_length_of_chain()){
+		if(reciever_node->private_chain->empty() || (reciever_node->private_chain->back()->get_length_of_chain() < reciever_node->get_longest_chain_tail()->get_length_of_chain())){
 
 			/*Empty the  private chain*/
 			while(!reciever_node->private_chain->empty()){
