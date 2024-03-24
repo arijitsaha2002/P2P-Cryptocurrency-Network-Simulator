@@ -12,6 +12,34 @@ def make_blockchain_tree(filename, title):
     T = nx.Graph()
     file = pd.read_csv(filename)
 
+    creator_dict = dict({})
+    print(filename)
+    print(file.columns)
+    for a, c_a, b, c_b in zip(file.id, file.cid, file.pid, file.pcid):
+        creator_dict[a] = c_a
+        creator_dict[b] = c_b
+        if a >= 0 and b >= 0:
+            T.add_edge(b, a)
+
+    G = T
+    plt.figure(figsize=(20,10))
+    pos = graphviz_layout(G, prog='dot', args='-Grankdir="LR"')
+
+    # Iterate through nodes
+    for node in G.nodes():
+        color = 'red' if creator_dict[node] == 0 or creator_dict[node] == 1 else 'blue'  # Set color based on node id
+        nx.draw_networkx_nodes(G, pos, nodelist=[node], node_size=300, node_color=color)  # Draw nodes
+        nx.draw_networkx_labels(G, pos, labels={node: creator_dict[node]}, font_color='white', font_size=10, font_weight='bold')
+
+    nx.draw_networkx_edges(G, pos, edgelist=G.edges(), arrows=True, arrowstyle="<-")
+    plt.title(f"{title}")
+    plt.savefig(filename+".png")
+    plt.close()
+    return
+
+    T = nx.Graph()
+    file = pd.read_csv(filename)
+
     for a, b in zip(file.id, file.pid):
         if( a >= 0 and b >= 0):
             T.add_edge(b, a)
@@ -22,7 +50,7 @@ def make_blockchain_tree(filename, title):
     nx.draw_networkx_nodes(G, pos, node_size=300)
     nx.draw_networkx_edges(G, pos, edgelist=G.edges(), arrows=True, arrowstyle="<-")
     plt.title(f"{title}")
-    plt.savefig(os.path.join(os.path.dirname(filename), f'{title}.png'))
+    plt.savefig(filename+".png")
     plt.close()
 
 def get_title_from_filename_as_dict(filename):
@@ -66,7 +94,7 @@ def full_analysis(dirname):
 
     for r in ret:
         title = get_title_from_filename(r[0])
-        plt.savefig(os.path.join(os.path.dirname(os.path.join(dirname, r[0])), f'tree_{os.path.basename(os.path.join(dirname, r[0]))[len("block_info_"):-len(".log.csv")]}.png'))
+        # plt.savefig(os.path.join(os.path.dirname(os.path.join(dirname, r[0])), f'tree_{os.path.basename(os.path.join(dirname, r[0]))[len("block_info_"):-len(".log.csv")]}.png'))
         plt.close()
         titles.append(title)
         
