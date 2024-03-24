@@ -13,8 +13,6 @@ def make_blockchain_tree(filename, title):
     file = pd.read_csv(filename)
 
     creator_dict = dict({})
-    print(filename)
-    print(file.columns)
     for a, c_a, b, c_b in zip(file.id, file.cid, file.pid, file.pcid):
         creator_dict[a] = c_a
         creator_dict[b] = c_b
@@ -27,27 +25,15 @@ def make_blockchain_tree(filename, title):
 
     # Iterate through nodes
     for node in G.nodes():
-        color = 'red' if creator_dict[node] == 0 or creator_dict[node] == 1 else 'blue'  # Set color based on node id
+        color = 'blue'  # Set color based on node id
+        if creator_dict[node] == 0:
+            color = 'red'
+        if creator_dict[node] == 1:
+            color = 'green'
+
         nx.draw_networkx_nodes(G, pos, nodelist=[node], node_size=300, node_color=color)  # Draw nodes
         nx.draw_networkx_labels(G, pos, labels={node: creator_dict[node]}, font_color='white', font_size=10, font_weight='bold')
 
-    nx.draw_networkx_edges(G, pos, edgelist=G.edges(), arrows=True, arrowstyle="<-")
-    plt.title(f"{title}")
-    plt.savefig(filename+".png")
-    plt.close()
-    return
-
-    T = nx.Graph()
-    file = pd.read_csv(filename)
-
-    for a, b in zip(file.id, file.pid):
-        if( a >= 0 and b >= 0):
-            T.add_edge(b, a)
-
-    G = T 
-    plt.figure(figsize=(20,10))
-    pos = graphviz_layout(G, prog='dot', args='-Grankdir="LR"')
-    nx.draw_networkx_nodes(G, pos, node_size=300)
     nx.draw_networkx_edges(G, pos, edgelist=G.edges(), arrows=True, arrowstyle="<-")
     plt.title(f"{title}")
     plt.savefig(filename+".png")
