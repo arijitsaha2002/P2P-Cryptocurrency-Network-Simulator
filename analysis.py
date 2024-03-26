@@ -52,7 +52,7 @@ def get_title_from_filename_as_dict(filename):
 
 def get_title_from_filename(filename):
     params = os.path.basename(filename)[:-len(".log.csv")].split("_")[2:]
-    ret = f"({params[0]}, {params[1]}, {params[2]}, {params[3]}, {params[4]})"
+    ret = f"({params[3]}, {params[4]})"
     return ret;
     
 
@@ -75,7 +75,9 @@ def full_analysis(dirname):
 
     attacker_info_list_x = dict({})
     attacker_info_list_y = dict({})
-    list_of_accepted_block_ratio = []
+    mpu_node_adv_0_list = []
+    mpu_node_overall_list= []
+    mpu_node_adv_1_list = []
     titles = []
 
     for r in ret:
@@ -88,31 +90,52 @@ def full_analysis(dirname):
         g1=g["g1"]
         g2=g["g2"]
         
-        attacker_longest_single_chain_ratio, accepted_block_ratio = do_ratio_analysis(os.path.join(dirname,r[0]), os.path.join(dirname,r[1]))
-        list_of_accepted_block_ratio.append(accepted_block_ratio)
+        mpu_node_adv_0, mpu_node_adv_1, mpu_node_overall, attacker_0_fraction_main_chain = do_ratio_analysis(os.path.join(dirname,r[0]), os.path.join(dirname,r[1]))
+        
+        mpu_node_adv_0_list.append(mpu_node_adv_0)
+        mpu_node_adv_1_list.append(mpu_node_adv_1)
+        mpu_node_overall_list.append(mpu_node_overall)
 
         if g2 in attacker_info_list_x:
             attacker_info_list_x[g2].append(g1)
-            attacker_info_list_y[g2].append(attacker_longest_single_chain_ratio)
+            attacker_info_list_y[g2].append(attacker_0_fraction_main_chain)
         else:
             attacker_info_list_x[g2] = [g1]
-            attacker_info_list_y[g2] = [attacker_longest_single_chain_ratio]
+            attacker_info_list_y[g2] = [attacker_0_fraction_main_chain]
 
 
 
 
     X_axis = numpy.arange(len(titles)) 
     plt.figure(figsize=(15,10))
-    plt.bar(X_axis, list_of_accepted_block_ratio)
+    plt.bar(X_axis, mpu_node_adv_0_list)
     plt.xticks(X_axis, titles) 
-    plt.ylabel("Accepted block ratio") 
-    plt.title("Fraction of Accepted Blocks") 
-    plt.xlabel("{mean_interarrival_block_time, mean_interarrival_transaction_time, frac_slow}")
-    plt.savefig(os.path.join(dirname, f'accepted_block_ratio.png'))
+    plt.ylabel("MPU_Node_Adv-0") 
+    plt.title("MPU Node Adversary") 
+    plt.xlabel("\u03c4 1, \u03c4 2")
+    plt.savefig(os.path.join(dirname, f'mpu_node_adv_0.png'))
     plt.close()
 
-    X_axis = numpy.arange(len(titles)) 
-    
+
+    plt.figure(figsize=(15,10))
+    plt.bar(X_axis, mpu_node_adv_1_list)
+    plt.xticks(X_axis, titles) 
+    plt.ylabel("MPU_Node_Adv-1") 
+    plt.title("MPU Node Adversary") 
+    plt.xlabel("\u03c4 1, \u03c4 2")
+    plt.savefig(os.path.join(dirname, f'mpu_node_adv_1.png'))
+    plt.close()
+
+
+    plt.figure(figsize=(15,10))
+    plt.bar(X_axis, mpu_node_overall_list)
+    plt.xticks(X_axis, titles) 
+    plt.ylabel("MPU_Node_Overall") 
+    plt.title("MPU Node Overall") 
+    plt.xlabel("\u03c4 1, \u03c4 2")
+    plt.savefig(os.path.join(dirname, f'mpu_node_overall.png'))
+    plt.close()
+
 
     for g2 in attacker_info_list_x.keys():
         plt.figure(figsize=(15,10))
@@ -126,15 +149,12 @@ def full_analysis(dirname):
         x_list = numpy.array(x_list)
         y_list = numpy.array(y_list)
 
-        print(x_list)
-        print(y_list)
-
 
         plt.plot(x_list, y_list)
-        plt.ylabel("attacker 1 aceptence ratio") 
-        plt.title("Full blockchain") 
+        plt.ylabel("Fraction of Blocks") 
+        plt.title(f"Fraction of Blocks in LVC, [\u03c4 2 = {g2}]") 
         plt.xlabel("\u03c4 2")
-        plt.savefig(os.path.join(dirname, f'{g2}.png'))
+        plt.savefig(os.path.join(dirname, f'fraction_of_blocks_in_lvc_{g2}.png'))
         plt.close()
 
 
@@ -199,22 +219,23 @@ def do_ratio_analysis(bc_info,node_info):
             num_blocks_per_node_overall[creator] += 1
 
 
-    attacker_block_ratio_in_longest_chain = 0 
-    if(num_blocks_per_node_in_longest_chain[0] > 0):
-        attacker_block_ratio_in_longest_chain = num_blocks_per_node_in_longest_chain[0]/num_blocks_per_node_overall[0]
+    mpu_node_adv_0 = 0 
 
-    ratio_of_blocks_in_longest_chain = longest_chain_len/N
-    return attacker_block_ratio_in_longest_chain, ratio_of_blocks_in_longest_chain
+    if(num_blocks_per_node_in_longest_chain[0] > 0):
+        mpu_node_adv_0 = num_blocks_per_node_in_longest_chain[0]/num_blocks_per_node_overall[0]
+
+    mpu_node_adv_1 = 0 
+
+    if(num_blocks_per_node_in_longest_chain[1] > 0):
+        mpu_node_adv_1 = num_blocks_per_node_in_longest_chain[1]/num_blocks_per_node_overall[1]
+
+    mpu_node_overall = longest_chain_len/N
+
+    attacker_0_fraction_main_chain = num_blocks_per_node_in_longest_chain[0] / longest_chain_len
+    return mpu_node_adv_0, mpu_node_adv_1, mpu_node_overall, attacker_0_fraction_main_chain
 
 if __name__ == "__main__":
     parse = argparse.ArgumentParser()
-    parse.add_argument("--blockchain_tree", action = 'store_true')
-    parse.add_argument("--node_info", type=str,default=None)
-    parse.add_argument("--blockchain_info", type=str,default=None)
-    parse.add_argument("--full_analysis", type=str, default=None)
+    parse.add_argument("--logs_dir", type=str, default="logs", required=True)
     args = parse.parse_args()
-    if args.full_analysis:
-        full_analysis(args.full_analysis)
-    if args.blockchain_tree:
-        make_blockchain_tree(args.blockchain_info)
-        plt.show()
+    full_analysis(args.logs_dir)
