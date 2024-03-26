@@ -116,7 +116,21 @@ def full_analysis(dirname):
 
     for g2 in attacker_info_list_x.keys():
         plt.figure(figsize=(15,10))
-        plt.plot(attacker_info_list_x[g2], attacker_info_list_y[g2])
+    
+        x_list = attacker_info_list_x[g2]
+        y_list = attacker_info_list_y[g2]
+
+        combined = sorted(zip(x_list, y_list))
+        x_list, y_list = zip(*combined)
+
+        x_list = numpy.array(x_list)
+        y_list = numpy.array(y_list)
+
+        print(x_list)
+        print(y_list)
+
+
+        plt.plot(x_list, y_list)
         plt.ylabel("attacker 1 aceptence ratio") 
         plt.title("Full blockchain") 
         plt.xlabel("\u03c4 2")
