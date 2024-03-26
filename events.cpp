@@ -112,6 +112,7 @@ void create_event_for_next_block(Node* node,long double timestamp)
 
 	/* Check if the node is selfish and has a private chain with non zero size*/
 	if(node->is_selfish() && node->private_chain->size() != 0){
+		assert(node->private_chain->back()->get_length_of_chain() > node->get_longest_chain_tail()->get_length_of_chain());
 		Event* new_event = new GenerateBlock(time, node, node->private_chain->back());
 		add_event_to_queue(new_event);
 	}
@@ -193,8 +194,17 @@ void BlockRecieved::simulate_event()
 				if(reciever_node->private_chain->empty())
 					break;
 			}
-			if(last_block_updated != nullptr)
+			if(last_block_updated != nullptr){
+				if(reciever_node->private_chain->size() == 1){
+					last_block_updated = reciever_node->private_chain->front();
+
+					reciever_node->add_block_to_tree(reciever_node->private_chain->front());
+					create_events_for_recvrs(reciever_node->private_chain->front());
+
+					reciever_node->private_chain->pop();
+				}
 				reciever_node->set_longest_chain_tail(last_block_updated);
+			}
 		}
 		return;
 	}
