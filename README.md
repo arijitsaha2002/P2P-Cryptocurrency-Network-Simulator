@@ -111,15 +111,13 @@ options:
 ```
 For using the `full_analysis` option, put current directory containing the `block_info_<params>.log.csv` and `node_info_<params>.log.csv` as arguments. This option can also be used to compare results for different parameters.
 
-`blockchain_tree` option can be used to plot the tree of at most 200 blocks as a graph.
-
 ## Sample Results
 
 `sample_logs` directory has the sample results of simulator on various parameter combinations.
 
-The following image shows the comparison of the contribution of blocks in longest chain of different types of nodes.
-![](sample_logs/longest_chain_contrib_comp.png)
+The following image shows the blockchain tree view at attacker node
+![](sample_logs/block_recieve_node0_100_10_0.1_0.5_0.3_0.3.png)
 
-The following images are sample blockchain trees with high and low forking.
-![](sample_logs/tree_100_20.0_0.2_0.2_0.2.png)
-![](sample_logs/tree_100_1.0_0.2_0.2_0.2.png)
+The following image shows the blockchain tree view at honest node
+![](sample_logs/block_recieve_node2_100_10_0.1_0.5_0.3_0.3.png)
+

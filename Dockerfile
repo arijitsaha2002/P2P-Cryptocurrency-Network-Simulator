@@ -8,4 +8,4 @@ WORKDIR /code
 COPY ./ /code
 RUN pip install -r requirements.txt
 
-CMD python3 graph.py {args.num_peers} > graph && make && ./blockSim
+CMD python3 graph.py 100 > graph && make && ./blockSim
