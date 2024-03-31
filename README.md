@@ -93,15 +93,12 @@ This file has the information of time when blocks are recieved by node correspon
 For a complete visual representation, use the file `analysis.py`.
 
 ```bash
-usage: analysis.py [-h] [--blockchain_tree] [--node_info NODE_INFO]
-                   [--blockchain_info BLOCKCHAIN_INFO] [--full_analysis FULL_ANALYSIS]
+./analysis.py --help
+usage: analysis.py [-h] --logs_dir LOGS_DIR
 
 options:
-  -h, --help            show this help message and exit
-  --blockchain_tree
-  --node_info NODE_INFO
-  --blockchain_info BLOCKCHAIN_INFO
-  --full_analysis FULL_ANALYSIS
+  -h, --help           show this help message and exit
+  --logs_dir LOGS_DIR
 ```
 For using the `full_analysis` option, put current directory containing the `block_info_<params>.log.csv` and `node_info_<params>.log.csv` as arguments. This option can also be used to compare results for different parameters.
 
