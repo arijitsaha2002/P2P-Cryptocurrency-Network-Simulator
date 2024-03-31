@@ -116,8 +116,8 @@ For using the `full_analysis` option, put current directory containing the `bloc
 `sample_logs` directory has the sample results of simulator on various parameter combinations.
 
 The following image shows the blockchain tree view at attacker node
-![](sample_logs/block_recieve_node0_100_10_0.1_0.5_0.3_0.3.png)
+![](sample_logs/block_recieve_node0_100_10_0.1_0.5_0.3_0.3.log.csv.png)
 
 The following image shows the blockchain tree view at honest node
-![](sample_logs/block_recieve_node2_100_10_0.1_0.5_0.3_0.3.png)
+![](sample_logs/block_recieve_node2_100_10_0.1_0.5_0.3_0.3.log.csv.png)
 
