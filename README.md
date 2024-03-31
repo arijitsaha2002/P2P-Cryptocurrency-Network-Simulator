@@ -79,12 +79,21 @@ The first row corresponds to the genesis block, hence the time is nan and creato
 
 #### `block_recieve_node<nodeID>_<params>.log.csv`
 
-This file has the information of time when blocks are recieved by node corresponding to `nodeID`
-
+This file has the information of time when blocks are received by node corresponding to `nodeID`
+id,cid,pid,pcid
 - `id`
     
-    BlockID of recieved block
-- `timestamp`
+    BlockID of received block
+- `cip`
+
+    CreatorID of received block
+- `pid`
+
+    Parent BlockID of received block
+- `pcid`
+
+    CreatorID of Parent BlockID
+
     
     Time of arrival of block at node `nodeID`
 
